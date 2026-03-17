@@ -47,6 +47,24 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <input type="range" id="ctrl-rotationspeed" min="0.0" max="5.0" step="0.1" value="1.0" class="w-full accent-[#73b2c1] bg-white/20 h-1.5 rounded-lg appearance-none cursor-pointer">
         </div>
 
+        <!-- Ripple Depth -->
+        <div class="flex flex-col gap-1.5">
+          <div class="flex justify-between text-xs font-medium text-white/70 uppercase tracking-wider">
+            <label for="ctrl-noiseamp">Ripple Depth</label>
+            <span id="val-noiseamp">0.50</span>
+          </div>
+          <input type="range" id="ctrl-noiseamp" min="0.1" max="1.5" step="0.05" value="0.5" class="w-full accent-[#73b2c1] bg-white/20 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <!-- Sensitivity -->
+        <div class="flex flex-col gap-1.5">
+          <div class="flex justify-between text-xs font-medium text-white/70 uppercase tracking-wider">
+            <label for="ctrl-sensitivity">Sensitivity</label>
+            <span id="val-sensitivity">1.0</span>
+          </div>
+          <input type="range" id="ctrl-sensitivity" min="0.1" max="3.0" step="0.1" value="1.0" class="w-full accent-[#73b2c1] bg-white/20 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+
         <!-- Colors Menu Frame -->
         <div class="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">
           <div class="text-xs font-semibold text-white/50 uppercase tracking-widest mb-1">Color Palette</div>
@@ -66,24 +84,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
             <input type="color" id="ctrl-bgcolor" value="#73b2c1" class="w-8 h-8 rounded cursor-pointer border-0 shadow-inner bg-transparent p-0 transform hover:scale-110 transition-transform">
           </div>
         </div>
-
-        <!-- Noise Amplitude -->
-        <div class="flex flex-col gap-1.5">
-          <div class="flex justify-between text-xs font-medium text-white/70 uppercase tracking-wider">
-            <label for="ctrl-noiseamp">Ripple Depth</label>
-            <span id="val-noiseamp">0.50</span>
-          </div>
-          <input type="range" id="ctrl-noiseamp" min="0.1" max="1.5" step="0.05" value="0.5" class="w-full accent-[#73b2c1] bg-white/20 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Sensitivity -->
-        <div class="flex flex-col gap-1.5">
-          <div class="flex justify-between text-xs font-medium text-white/70 uppercase tracking-wider">
-            <label for="ctrl-sensitivity">Sensitivity</label>
-            <span id="val-sensitivity">1.0</span>
-          </div>
-          <input type="range" id="ctrl-sensitivity" min="0.1" max="3.0" step="0.1" value="1.0" class="w-full accent-[#73b2c1] bg-white/20 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
       </div>
 
       <div class="flex gap-3 mt-5">
@@ -91,10 +91,18 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
           Reset Config
         </button>
-        <button id="copy-config" class="w-full bg-white text-black cursor-pointer font-semibold py-2.5 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          Copy Config
+      </div>
+
+      <div class="flex gap-3 mt-2">
+        <button id="download-config" class="w-full bg-white/10 text-white cursor-pointer font-semibold py-2.5 rounded-xl hover:bg-white/20 transition-colors flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
         </button>
+        <button id="upload-config" class="w-full bg-white/10 text-white cursor-pointer font-semibold py-2.5 rounded-xl hover:bg-white/20 transition-colors flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload
+        </button>
+        <input type="file" id="upload-config-input" accept=".json,application/json" class="hidden">
       </div>
 
     </div>
@@ -108,8 +116,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     </button>
   </div>
 
-  <!-- Fullscreen Button (bottom-right) -->
-  <button id="btn-fullscreen" class="absolute z-10 bottom-5 right-5 pointer-events-auto cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full p-2.5 transition-all duration-500 focus:outline-none" title="Toggle Fullscreen (F)">
+  <!-- Fullscreen Button (top-right) -->
+  <button id="btn-fullscreen" class="absolute z-10 top-5 right-5 pointer-events-auto cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full p-2.5 transition-all duration-500 focus:outline-none" title="Toggle Fullscreen (F)">
     <svg id="icon-expand" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
     <svg id="icon-compress" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>
   </button>
@@ -220,14 +228,14 @@ idleTimer = setTimeout(hideUI, 2500);
 
 // --- Config State Object ---
 const DEFAULT_CONFIG = {
-  detail: 32,
-  baseRadius: 1.0,
-  rippleDepth: 0.5,
-  sensitivity: 1.0,
-  rotationSpeed: 1.0,
-  primaryColor: '#ff00ff',
-  accentColor: '#00ffff',
-  bgColor: '#73b2c1'
+  detail: 4,
+  baseRadius: 1.5,
+  rippleDepth: 1.0,
+  sensitivity: 1.5,
+  rotationSpeed: 0.0,
+  primaryColor: '#0011ff',
+  accentColor: '#e14dff',
+  bgColor: '#403479'
 };
 
 const savedConfig = localStorage.getItem('sonic_blob_config');
@@ -271,15 +279,87 @@ bgColorInput.addEventListener('input', (e) => {
   saveConfig();
 });
 
-// Copy button
-const copyBtn = document.getElementById('copy-config')!;
-copyBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(JSON.stringify(config, null, 2))
-    .then(() => {
-      const originalText = copyBtn.innerHTML;
-      copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
-      setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
-    });
+
+
+// Download button
+const downloadBtn = document.getElementById('download-config')!;
+downloadBtn.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sonic-blob-config.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Upload button + validation
+const uploadBtn = document.getElementById('upload-config')!;
+const uploadInput = document.getElementById('upload-config-input') as HTMLInputElement;
+
+uploadBtn.addEventListener('click', () => uploadInput.click());
+
+uploadInput.addEventListener('change', () => {
+  const file = uploadInput.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target!.result as string);
+
+      // Schema: [key, type, min, max] — min/max only for numbers
+      const schema: Array<[keyof typeof config, 'number' | 'string', number?, number?]> = [
+        ['detail',        'number', 4,   128],
+        ['baseRadius',    'number', 0.5, 2.0],
+        ['rippleDepth',   'number', 0.1, 1.5],
+        ['sensitivity',   'number', 0.1, 3.0],
+        ['rotationSpeed', 'number', 0.0, 5.0],
+        ['primaryColor',  'string'],
+        ['accentColor',   'string'],
+        ['bgColor',       'string'],
+      ];
+
+      const colorRe = /^#[0-9a-fA-F]{6}$/;
+      const errors: string[] = [];
+
+      for (const [key, type, min, max] of schema) {
+        const val = parsed[key];
+        if (val === undefined) {
+          errors.push(`Missing key: "${String(key)}"`);
+          continue;
+        }
+        if (typeof val !== type) {
+          errors.push(`"${String(key)}" must be a ${type}, got ${typeof val}`);
+          continue;
+        }
+        if (type === 'number' && min !== undefined && max !== undefined) {
+          if (val < min || val > max) {
+            errors.push(`"${String(key)}" must be between ${min} and ${max}, got ${val}`);
+          }
+        }
+        if (type === 'string' && !colorRe.test(val)) {
+          errors.push(`"${String(key)}" must be a hex color like #rrggbb, got "${val}"`);
+        }
+      }
+
+      if (errors.length > 0) {
+        console.error('[Sonic Blob] Config upload failed:\n' + errors.map(e => `  • ${e}`).join('\n'));
+        return;
+      }
+
+      Object.assign(config, parsed);
+      saveConfig();
+      recreateGeometry(config.detail);
+      updateUIFromConfig();
+      console.info('[Sonic Blob] Config loaded successfully.');
+    } catch {
+      console.error('[Sonic Blob] Config upload failed: invalid JSON file.');
+    } finally {
+      uploadInput.value = ''; // reset so the same file can be re-uploaded
+    }
+  };
+  reader.readAsText(file);
 });
 
 
