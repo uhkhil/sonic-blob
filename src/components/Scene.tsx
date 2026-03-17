@@ -68,17 +68,17 @@ export const Scene: React.FC = () => {
 
     // Geometry Helpers
     let positionAttribute = geometry.getAttribute('position');
-    let originalPositions: number[] = [];
+    let originalPositions = new Float32Array(positionAttribute.count * 3);
 
     const extractOriginalPositions = () => {
       positionAttribute = geometry.getAttribute('position');
-      originalPositions = [];
+      if (originalPositions.length !== positionAttribute.count * 3) {
+        originalPositions = new Float32Array(positionAttribute.count * 3);
+      }
       for (let i = 0; i < positionAttribute.count; i++) {
-        originalPositions.push(
-          positionAttribute.getX(i),
-          positionAttribute.getY(i),
-          positionAttribute.getZ(i)
-        );
+        originalPositions[i * 3]     = positionAttribute.getX(i);
+        originalPositions[i * 3 + 1] = positionAttribute.getY(i);
+        originalPositions[i * 3 + 2] = positionAttribute.getZ(i);
       }
     };
     extractOriginalPositions();
@@ -123,6 +123,8 @@ export const Scene: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     // --- Render Loop ---
+    const tempVertex = new THREE.Vector3();
+    
     const animate = () => {
       animationId = requestAnimationFrame(animate);
 
@@ -153,24 +155,26 @@ export const Scene: React.FC = () => {
       const posAttr = geometry.getAttribute('position');
       const noiseFreq = 0.8 + (smoothedTreble * 0.8);
       const noiseAmp = smoothedVolume * config.sensitivity * (0.4 + smoothedBass * 2.5);
-      const vertex = new THREE.Vector3();
 
       for (let i = 0; i < posAttr.count; i++) {
         const ix = i * 3;
-        vertex.set(originalPositions[ix], originalPositions[ix + 1], originalPositions[ix + 2]);
-        const direction = vertex.clone().normalize();
+        // Reuse temporary vertex instead of allocating new ones
+        tempVertex.set(originalPositions[ix], originalPositions[ix + 1], originalPositions[ix + 2]);
         
         let noiseVal = noise3D(
-            vertex.x * noiseFreq + time, 
-            vertex.y * noiseFreq + time, 
-            vertex.z * noiseFreq + time
+            tempVertex.x * noiseFreq + time, 
+            tempVertex.y * noiseFreq + time, 
+            tempVertex.z * noiseFreq + time
         );
 
         const baseRadius = config.baseRadius + (smoothedVolume * 0.1); 
         const scale = baseRadius + noiseVal * noiseAmp * config.rippleDepth;
 
-        vertex.copy(direction).multiplyScalar(scale);
-        posAttr.setXYZ(i, vertex.x, vertex.y, vertex.z);
+        // Multiply direction by scale - tempVertex itself IS the direction since it's centered at 0,0,0
+        // We just need to normalize it once if it's not a unit sphere, but for icosahedron it's close enough 
+        // OR we can be precise and normalize it.
+        tempVertex.normalize().multiplyScalar(scale);
+        posAttr.setXYZ(i, tempVertex.x, tempVertex.y, tempVertex.z);
       }
       
       posAttr.needsUpdate = true;
