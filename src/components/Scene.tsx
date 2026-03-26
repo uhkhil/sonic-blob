@@ -10,12 +10,13 @@ export const Scene: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     // --- State & Refs ---
     let config = store.config;
     let audioData: Uint8Array | null = null;
-    let smoothedVolume = 0; 
+    let smoothedVolume = 0;
     let smoothedBass = 0;
     let smoothedTreble = 0;
     let animationId: number;
@@ -25,14 +26,19 @@ export const Scene: React.FC = () => {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(config.bgColor);
     document.body.style.backgroundColor = config.bgColor;
-    
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000,
+    );
     camera.position.z = 5;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    containerRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
 
     // --- Lighting ---
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
@@ -51,7 +57,7 @@ export const Scene: React.FC = () => {
     scene.add(light3);
 
     // --- Geometry & Material ---
-    let geometry = new THREE.IcosahedronGeometry(1.2, config.detail); 
+    let geometry = new THREE.IcosahedronGeometry(1.2, config.detail);
     const material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       metalness: 0.1,
@@ -60,7 +66,7 @@ export const Scene: React.FC = () => {
       clearcoatRoughness: 0.1,
       iridescence: 1.0,
       iridescenceIOR: 1.5,
-      iridescenceThicknessRange: [100, 400]
+      iridescenceThicknessRange: [100, 400],
     });
 
     const blob = new THREE.Mesh(geometry, material);
@@ -76,7 +82,7 @@ export const Scene: React.FC = () => {
         originalPositions = new Float32Array(positionAttribute.count * 3);
       }
       for (let i = 0; i < positionAttribute.count; i++) {
-        originalPositions[i * 3]     = positionAttribute.getX(i);
+        originalPositions[i * 3] = positionAttribute.getX(i);
         originalPositions[i * 3 + 1] = positionAttribute.getY(i);
         originalPositions[i * 3 + 2] = positionAttribute.getZ(i);
       }
@@ -124,7 +130,7 @@ export const Scene: React.FC = () => {
 
     // --- Render Loop ---
     const tempVertex = new THREE.Vector3();
-    
+
     const animate = () => {
       animationId = requestAnimationFrame(animate);
 
@@ -137,49 +143,63 @@ export const Scene: React.FC = () => {
       let currentTreble = 0;
 
       if (audioData) {
-        const avgVolume = audioData.reduce((a, b) => a + b, 0) / audioData.length;
+        const avgVolume =
+          audioData.reduce((a, b) => a + b, 0) / audioData.length;
         currentVolume = avgVolume / 255.0;
 
-        currentBass = audioData.slice(0, 10).reduce((a, b) => a + b, 0) / 10 / 255.0;
-        currentTreble = audioData.slice(50, 100).reduce((a, b) => a + b, 0) / 50 / 255.0;
+        currentBass =
+          audioData.slice(0, 10).reduce((a, b) => a + b, 0) / 10 / 255.0;
+        currentTreble =
+          audioData.slice(50, 100).reduce((a, b) => a + b, 0) / 50 / 255.0;
       }
 
       const attack = 0.15;
       const release = 0.03;
-      smoothedVolume += (currentVolume - smoothedVolume) * (currentVolume > smoothedVolume ? attack : release);
-      smoothedBass   += (currentBass   - smoothedBass)   * (currentBass   > smoothedBass   ? attack : release);
-      smoothedTreble += (currentTreble - smoothedTreble) * (currentTreble > smoothedTreble ? attack : release);
+      smoothedVolume +=
+        (currentVolume - smoothedVolume) *
+        (currentVolume > smoothedVolume ? attack : release);
+      smoothedBass +=
+        (currentBass - smoothedBass) *
+        (currentBass > smoothedBass ? attack : release);
+      smoothedTreble +=
+        (currentTreble - smoothedTreble) *
+        (currentTreble > smoothedTreble ? attack : release);
 
       time += smoothedVolume * 0.02;
 
       const posAttr = geometry.getAttribute('position');
-      const noiseFreq = 0.8 + (smoothedTreble * 0.8);
-      const noiseAmp = smoothedVolume * config.sensitivity * (0.4 + smoothedBass * 2.5);
+      const noiseFreq = 0.8 + smoothedTreble * 0.8;
+      const noiseAmp =
+        smoothedVolume * config.sensitivity * (0.4 + smoothedBass * 2.5);
 
       for (let i = 0; i < posAttr.count; i++) {
         const ix = i * 3;
         // Reuse temporary vertex instead of allocating new ones
-        tempVertex.set(originalPositions[ix], originalPositions[ix + 1], originalPositions[ix + 2]);
-        
-        let noiseVal = noise3D(
-            tempVertex.x * noiseFreq + time, 
-            tempVertex.y * noiseFreq + time, 
-            tempVertex.z * noiseFreq + time
+        tempVertex.set(
+          originalPositions[ix],
+          originalPositions[ix + 1],
+          originalPositions[ix + 2],
         );
 
-        const baseRadius = config.baseRadius + (smoothedVolume * 0.1); 
+        const noiseVal = noise3D(
+          tempVertex.x * noiseFreq + time,
+          tempVertex.y * noiseFreq + time,
+          tempVertex.z * noiseFreq + time,
+        );
+
+        const baseRadius = config.baseRadius + smoothedVolume * 0.1;
         const scale = baseRadius + noiseVal * noiseAmp * config.rippleDepth;
 
         // Multiply direction by scale - tempVertex itself IS the direction since it's centered at 0,0,0
-        // We just need to normalize it once if it's not a unit sphere, but for icosahedron it's close enough 
+        // We just need to normalize it once if it's not a unit sphere, but for icosahedron it's close enough
         // OR we can be precise and normalize it.
         tempVertex.normalize().multiplyScalar(scale);
         posAttr.setXYZ(i, tempVertex.x, tempVertex.y, tempVertex.z);
       }
-      
+
       posAttr.needsUpdate = true;
       geometry.computeVertexNormals();
-      
+
       renderer.render(scene, camera);
     };
 
@@ -190,16 +210,18 @@ export const Scene: React.FC = () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
       unsubscribe();
-      
+
       geometry.dispose();
       material.dispose();
       renderer.dispose();
-      
-      if (containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
+
+      if (container) {
+        container.removeChild(renderer.domElement);
       }
     };
   }, []);
 
-  return <div ref={containerRef} className="absolute inset-0 z-0 w-full h-full" />;
+  return (
+    <div ref={containerRef} className="absolute inset-0 z-0 w-full h-full" />
+  );
 };

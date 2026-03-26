@@ -6,7 +6,7 @@ export const DEFAULT_CONFIG = {
   rotationSpeed: 1.0,
   primaryColor: '#ff00ff',
   accentColor: '#00ffff',
-  bgColor: '#73b2c1'
+  bgColor: '#73b2c1',
 };
 
 export type Config = typeof DEFAULT_CONFIG;
@@ -20,7 +20,9 @@ class Store {
 
   constructor() {
     const saved = localStorage.getItem('sonic_blob_config');
-    this.state = saved ? { ...DEFAULT_CONFIG, ...JSON.parse(saved) } : { ...DEFAULT_CONFIG };
+    this.state = saved
+      ? { ...DEFAULT_CONFIG, ...JSON.parse(saved) }
+      : { ...DEFAULT_CONFIG };
   }
 
   get config(): Config {
@@ -38,7 +40,7 @@ class Store {
     this.save();
     this.notify();
   }
-  
+
   replace(fullConfig: Config) {
     this.state = { ...fullConfig };
     this.save();
@@ -47,7 +49,9 @@ class Store {
 
   subscribe(listener: Listener) {
     this.listeners.add(listener);
-    return () => { this.listeners.delete(listener); };
+    return () => {
+      this.listeners.delete(listener);
+    };
   }
 
   private save() {
@@ -55,7 +59,7 @@ class Store {
   }
 
   private notify() {
-    this.listeners.forEach(l => l(this.state));
+    this.listeners.forEach((l) => l(this.state));
   }
 }
 

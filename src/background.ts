@@ -5,12 +5,14 @@ chrome.action.onClicked.addListener(async (tab) => {
   const visualizerUrl = chrome.runtime.getURL('index.html');
   const existing = await chrome.tabs.query({ url: visualizerUrl + '*' });
   if (existing.length > 0) {
-    const ids = existing.map(t => t.id).filter((id): id is number => id !== undefined);
+    const ids = existing
+      .map((t) => t.id)
+      .filter((id): id is number => id !== undefined);
     if (ids.length > 0) {
       await chrome.tabs.remove(ids);
     }
     // Small delay to ensure tabs are fully removed and resources freed
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
   }
 
   // Get the target tab ID (the tab whose audio we want to capture)
@@ -25,9 +27,12 @@ chrome.action.onClicked.addListener(async (tab) => {
 // Handle requests for fresh streamId tokens from the visualizer
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === 'GET_STREAM_ID' && message.targetTabId) {
-    chrome.tabCapture.getMediaStreamId({ targetTabId: message.targetTabId }, (streamId) => {
-      sendResponse({ streamId });
-    });
+    chrome.tabCapture.getMediaStreamId(
+      { targetTabId: message.targetTabId },
+      (streamId) => {
+        sendResponse({ streamId });
+      },
+    );
     return true; // Keep message channel open for async response
   }
 });
