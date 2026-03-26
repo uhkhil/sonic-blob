@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { store } from '../store';
 import type { Config } from '../store';
 
@@ -7,6 +7,26 @@ export const ControlPanel: React.FC<{
   onClose: () => void;
 }> = ({ isOpen, onClose }) => {
   const [config, setConfig] = useState<Config>(store.config);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        panelRef.current &&
+        !panelRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     const unsubscribe = store.subscribe(setConfig);
@@ -105,7 +125,7 @@ export const ControlPanel: React.FC<{
   `;
 
   return (
-    <div id="controls-panel" className={panelClasses}>
+    <div ref={panelRef} id="controls-panel" className={panelClasses}>
       <div className="flex justify-between items-center pb-2 border-b border-white/10">
         <h3 className="font-semibold text-lg">Appearance Config</h3>
         <button

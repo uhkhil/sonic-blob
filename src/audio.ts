@@ -10,7 +10,6 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
     }
 
     const targetTabId = parseInt(targetTabIdStr, 10);
-    console.log(`[Audio] Initializing capture for tab: ${targetTabId}...`);
 
     const INITIAL_DELAY = 500;
     const MAX_RETRIES = 3;
@@ -27,9 +26,7 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
 
         // Request a FRESH streamId token for every attempt,
         // as they are single-use and expire if capture fails.
-        console.log(
-          `[Audio] Requesting fresh streamId (attempt ${attempts}/${MAX_RETRIES})...`,
-        );
+
         const { streamId } = await chrome.runtime.sendMessage({
           type: 'GET_STREAM_ID',
           targetTabId,
@@ -38,10 +35,6 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
         if (!streamId) {
           throw new Error('Failed to acquire streamId from background script.');
         }
-
-        console.log(
-          `[Audio] Attempting userMedia capture with token: ${streamId.substring(0, 8)}...`,
-        );
 
         stream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -54,12 +47,6 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
         });
 
         if (stream) {
-          console.log(
-            '[Audio] Stream captured successfully on attempt',
-            attempts,
-            ':',
-            stream.id,
-          );
           break;
         }
       } catch (error: unknown) {
@@ -70,7 +57,6 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
           err.message,
         );
         if (attempts < MAX_RETRIES) {
-          console.log(`[Audio] Waiting ${RETRY_DELAY}ms before retry...`);
           await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
           continue;
         }
@@ -91,7 +77,6 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
     )();
 
     if (audioCtx.state === 'suspended') {
-      console.log('[Audio] AudioContext is suspended, attempting to resume...');
       await audioCtx.resume();
     }
 
@@ -119,7 +104,6 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
     updateData();
 
     return () => {
-      console.log('[Audio] Cleaning up audio capture...');
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
       }

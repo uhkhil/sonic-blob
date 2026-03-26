@@ -83,6 +83,7 @@ export const UIOverlay: React.FC = () => {
 
         <button
           style={uiStyle}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             setIsPanelOpen(!isPanelOpen);
