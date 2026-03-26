@@ -41,18 +41,18 @@ export const Scene: React.FC = () => {
     container.appendChild(renderer.domElement);
 
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
 
-    const light1 = new THREE.DirectionalLight(config.primaryColor, 2.0);
+    const light1 = new THREE.DirectionalLight(config.primaryColor, 4.0);
     light1.position.set(-5, -5, 5);
     scene.add(light1);
 
-    const light2 = new THREE.DirectionalLight(config.accentColor, 2.0);
+    const light2 = new THREE.DirectionalLight(config.accentColor, 4.0);
     light2.position.set(5, 5, 5);
     scene.add(light2);
 
-    const light3 = new THREE.DirectionalLight(0xffffff, 1.0);
+    const light3 = new THREE.DirectionalLight(0xffffff, 0.3);
     light3.position.set(0, 0, 5);
     scene.add(light3);
 
@@ -142,15 +142,34 @@ export const Scene: React.FC = () => {
       let currentBass = 0;
       let currentTreble = 0;
 
-      if (audioData) {
+      if (audioData && audioData.length > 0) {
+        const captureLen = Math.floor(config.audioSamples);
+        const activeData = audioData.slice(0, captureLen);
+        const actualLen = activeData.length;
+
         const avgVolume =
-          audioData.reduce((a, b) => a + b, 0) / audioData.length;
+          actualLen > 0 ? activeData.reduce((a, b) => a + b, 0) / actualLen : 0;
         currentVolume = avgVolume / 255.0;
 
+        const bassEnd = Math.max(1, Math.floor(actualLen * 0.1));
         currentBass =
-          audioData.slice(0, 10).reduce((a, b) => a + b, 0) / 10 / 255.0;
+          actualLen > 0
+            ? activeData.slice(0, bassEnd).reduce((a, b) => a + b, 0) /
+              bassEnd /
+              255.0
+            : 0;
+
+        const trebleStart = Math.min(
+          actualLen - 1,
+          Math.floor(actualLen * 0.4),
+        );
+        const trebleCount = actualLen - trebleStart;
         currentTreble =
-          audioData.slice(50, 100).reduce((a, b) => a + b, 0) / 50 / 255.0;
+          trebleCount > 0
+            ? activeData.slice(trebleStart).reduce((a, b) => a + b, 0) /
+              trebleCount /
+              255.0
+            : 0;
       }
 
       const attack = 0.15;

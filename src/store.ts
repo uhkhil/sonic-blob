@@ -1,12 +1,13 @@
 export const DEFAULT_CONFIG = {
-  detail: 32,
-  baseRadius: 1.0,
-  rippleDepth: 0.5,
-  sensitivity: 1.0,
-  rotationSpeed: 1.0,
-  primaryColor: '#ff00ff',
-  accentColor: '#00ffff',
-  bgColor: '#73b2c1',
+  detail: 4,
+  baseRadius: 1.5,
+  rippleDepth: 1,
+  sensitivity: 1.5,
+  rotationSpeed: 0,
+  audioSamples: 128,
+  primaryColor: '#FFD166',
+  accentColor: '#EF476F',
+  bgColor: '#3A2E5E',
 };
 
 export type Config = typeof DEFAULT_CONFIG;

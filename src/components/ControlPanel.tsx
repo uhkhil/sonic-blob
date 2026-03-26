@@ -52,6 +52,7 @@ export const ControlPanel: React.FC<{
           ['rippleDepth', 'number', 0.1, 1.5],
           ['sensitivity', 'number', 0.1, 3.0],
           ['rotationSpeed', 'number', 0.0, 5.0],
+          ['audioSamples', 'number', 10, 128],
           ['primaryColor', 'string'],
           ['accentColor', 'string'],
           ['bgColor', 'string'],
@@ -130,7 +131,7 @@ export const ControlPanel: React.FC<{
 
       <div className="flex flex-col gap-4 mt-4">
         <SliderRow
-          label="Polygon Detail"
+          label="Shape Smoothness"
           value={config.detail}
           min={4}
           max={128}
@@ -140,36 +141,50 @@ export const ControlPanel: React.FC<{
           title="Higher = smoother but higher CPU usage"
         />
         <SliderRow
-          label="Base Size"
+          label="Blob Size"
           value={config.baseRadius}
           min={0.5}
           max={2.0}
           step={0.05}
           onChange={(v: number) => handleChange('baseRadius', v)}
+          title="Adjusts the overall size of the visualization"
         />
         <SliderRow
-          label="Rotation Speed"
+          label="Spin Speed"
           value={config.rotationSpeed}
           min={0.0}
           max={5.0}
           step={0.1}
           onChange={(v: number) => handleChange('rotationSpeed', v)}
+          title="Controls how quickly the blob rotates"
         />
         <SliderRow
-          label="Ripple Depth"
+          label="Reaction Size"
           value={config.rippleDepth}
           min={0.1}
           max={1.5}
           step={0.05}
           onChange={(v: number) => handleChange('rippleDepth', v)}
+          title="Sets the maximum height of the audio bumps/ripples"
         />
         <SliderRow
-          label="Sensitivity"
+          label="Audio Sensitivity"
           value={config.sensitivity}
           min={0.1}
           max={3.0}
           step={0.1}
           onChange={(v: number) => handleChange('sensitivity', v)}
+          title="Makes the blob react more easily to quieter sounds"
+        />
+        <SliderRow
+          label="Audio Complexity"
+          value={config.audioSamples}
+          min={10}
+          max={128}
+          step={1}
+          isInt
+          onChange={(v: number) => handleChange('audioSamples', v)}
+          title="Number of frequencies captured"
         />
 
         <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">
