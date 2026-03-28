@@ -35,7 +35,10 @@ export const ControlPanel: React.FC<{
     };
   }, []);
 
-  const handleChange = (key: keyof Config, value: number | string | boolean) => {
+  const handleChange = (
+    key: keyof Config,
+    value: number | string | boolean,
+  ) => {
     store.update({ [key]: value });
   };
 

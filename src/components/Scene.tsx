@@ -79,7 +79,13 @@ float snoise(vec3 P) {
 }
 `;
 
-export const Scene = () => {
+export interface SceneProps {
+  onError?: () => void;
+  onSilence?: () => void;
+  onAudio?: () => void;
+}
+
+export const Scene = ({ onError, onSilence, onAudio }: SceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -131,14 +137,14 @@ export const Scene = () => {
 
     // --- Geometry & Material ---
     let geometry = new THREE.IcosahedronGeometry(1.2, config.detail);
-    
+
     // Shader Uniforms
     const shaderUniforms = {
       uTime: { value: 0 },
       uNoiseFreq: { value: 0 },
       uNoiseAmp: { value: 0 },
       uBaseRadius: { value: 1.5 },
-      uRippleDepth: { value: 1.0 }
+      uRippleDepth: { value: 1.0 },
     };
 
     const material = new THREE.MeshPhysicalMaterial({
@@ -160,7 +166,8 @@ export const Scene = () => {
       shader.uniforms.uBaseRadius = shaderUniforms.uBaseRadius;
       shader.uniforms.uRippleDepth = shaderUniforms.uRippleDepth;
 
-      shader.vertexShader = `
+      shader.vertexShader =
+        `
         uniform float uTime;
         uniform float uNoiseFreq;
         uniform float uNoiseAmp;
@@ -205,14 +212,14 @@ export const Scene = () => {
             newNormal = -newNormal;
         }
         objectNormal = newNormal;
-        `
+        `,
       );
 
       shader.vertexShader = shader.vertexShader.replace(
         '#include <begin_vertex>',
         `
         vec3 transformed = displacedPos;
-        `
+        `,
       );
     };
 
@@ -247,7 +254,10 @@ export const Scene = () => {
     // --- Audio Init ---
     startAudioCapture((data: Uint8Array) => {
       audioData = data;
-    }).catch(console.error);
+    }).catch((err) => {
+      console.error(err);
+      if (onError) onError();
+    });
 
     // --- Resize Handler ---
     const handleResize = () => {
@@ -258,6 +268,8 @@ export const Scene = () => {
     window.addEventListener('resize', handleResize);
 
     // --- Render Loop ---
+    let hasAudio = false;
+    let silenceTimer = 0;
 
     const animate = () => {
       animationId = requestAnimationFrame(animate);
@@ -279,14 +291,14 @@ export const Scene = () => {
           for (let i = 0; i < actualLen; i++) {
             volSum += audioData[i];
           }
-          currentVolume = (volSum / actualLen) / 255.0;
+          currentVolume = volSum / actualLen / 255.0;
 
           const bassEnd = Math.max(1, Math.floor(actualLen * 0.1));
           let bassSum = 0;
           for (let i = 0; i < bassEnd; i++) {
             bassSum += audioData[i];
           }
-          currentBass = (bassSum / bassEnd) / 255.0;
+          currentBass = bassSum / bassEnd / 255.0;
 
           const trebleStart = Math.min(
             actualLen - 1,
@@ -298,8 +310,21 @@ export const Scene = () => {
             for (let i = trebleStart; i < actualLen; i++) {
               trebleSum += audioData[i];
             }
-            currentTreble = (trebleSum / trebleCount) / 255.0;
+            currentTreble = trebleSum / trebleCount / 255.0;
           }
+        }
+      }
+
+      if (currentVolume > 0) {
+        if (!hasAudio && onAudio) {
+          hasAudio = true;
+          onAudio();
+        }
+      } else if (!hasAudio) {
+        silenceTimer += 0.016;
+        if (silenceTimer > 1.0 && onSilence) {
+          onSilence();
+          silenceTimer = -9999; // Only trigger once
         }
       }
 
@@ -355,7 +380,7 @@ export const Scene = () => {
         container.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [onAudio, onError, onSilence]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 z-0 w-full h-full" />
