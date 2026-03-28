@@ -129,7 +129,6 @@ export const Scene: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     // --- Render Loop ---
-    const tempVertex = new THREE.Vector3();
 
     const animate = () => {
       animationId = requestAnimationFrame(animate);
@@ -144,32 +143,35 @@ export const Scene: React.FC = () => {
 
       if (audioData && audioData.length > 0) {
         const captureLen = Math.floor(config.audioSamples);
-        const activeData = audioData.slice(0, captureLen);
-        const actualLen = activeData.length;
+        const actualLen = Math.min(captureLen, audioData.length);
 
-        const avgVolume =
-          actualLen > 0 ? activeData.reduce((a, b) => a + b, 0) / actualLen : 0;
-        currentVolume = avgVolume / 255.0;
+        if (actualLen > 0) {
+          let volSum = 0;
+          for (let i = 0; i < actualLen; i++) {
+            volSum += audioData[i];
+          }
+          currentVolume = (volSum / actualLen) / 255.0;
 
-        const bassEnd = Math.max(1, Math.floor(actualLen * 0.1));
-        currentBass =
-          actualLen > 0
-            ? activeData.slice(0, bassEnd).reduce((a, b) => a + b, 0) /
-              bassEnd /
-              255.0
-            : 0;
+          const bassEnd = Math.max(1, Math.floor(actualLen * 0.1));
+          let bassSum = 0;
+          for (let i = 0; i < bassEnd; i++) {
+            bassSum += audioData[i];
+          }
+          currentBass = (bassSum / bassEnd) / 255.0;
 
-        const trebleStart = Math.min(
-          actualLen - 1,
-          Math.floor(actualLen * 0.4),
-        );
-        const trebleCount = actualLen - trebleStart;
-        currentTreble =
-          trebleCount > 0
-            ? activeData.slice(trebleStart).reduce((a, b) => a + b, 0) /
-              trebleCount /
-              255.0
-            : 0;
+          const trebleStart = Math.min(
+            actualLen - 1,
+            Math.floor(actualLen * 0.4),
+          );
+          const trebleCount = actualLen - trebleStart;
+          let trebleSum = 0;
+          if (trebleCount > 0) {
+            for (let i = trebleStart; i < actualLen; i++) {
+              trebleSum += audioData[i];
+            }
+            currentTreble = (trebleSum / trebleCount) / 255.0;
+          }
+        }
       }
 
       const attack = 0.15;
@@ -191,29 +193,26 @@ export const Scene: React.FC = () => {
       const noiseAmp =
         smoothedVolume * config.sensitivity * (0.4 + smoothedBass * 2.5);
 
+      const invRadius = 1.0 / 1.2; // Original icosahedron radius is 1.2
+      const baseRadius = config.baseRadius + smoothedVolume * 0.1;
+
+      // Extract raw original array array for speed
       for (let i = 0; i < posAttr.count; i++) {
         const ix = i * 3;
-        // Reuse temporary vertex instead of allocating new ones
-        tempVertex.set(
-          originalPositions[ix],
-          originalPositions[ix + 1],
-          originalPositions[ix + 2],
-        );
+        const ox = originalPositions[ix];
+        const oy = originalPositions[ix + 1];
+        const oz = originalPositions[ix + 2];
 
         const noiseVal = noise3D(
-          tempVertex.x * noiseFreq + time,
-          tempVertex.y * noiseFreq + time,
-          tempVertex.z * noiseFreq + time,
+          ox * noiseFreq + time,
+          oy * noiseFreq + time,
+          oz * noiseFreq + time,
         );
 
-        const baseRadius = config.baseRadius + smoothedVolume * 0.1;
         const scale = baseRadius + noiseVal * noiseAmp * config.rippleDepth;
+        const finalScale = scale * invRadius;
 
-        // Multiply direction by scale - tempVertex itself IS the direction since it's centered at 0,0,0
-        // We just need to normalize it once if it's not a unit sphere, but for icosahedron it's close enough
-        // OR we can be precise and normalize it.
-        tempVertex.normalize().multiplyScalar(scale);
-        posAttr.setXYZ(i, tempVertex.x, tempVertex.y, tempVertex.z);
+        posAttr.setXYZ(i, ox * finalScale, oy * finalScale, oz * finalScale);
       }
 
       posAttr.needsUpdate = true;
