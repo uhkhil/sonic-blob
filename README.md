@@ -1,4 +1,7 @@
-# Sonic Blob
+<div align="center">
+  <img src="public/logo.png" alt="Sonic Blob Logo" width="128" />
+  <h1>Sonic Blob</h1>
+</div>
 
 Sonic Blob is a Chrome extension that turns audio from the active browser tab into a fluid, immersive 3D music visualizer.
 
@@ -28,6 +31,8 @@ The project focuses on:
   - rotation speed
   - blob lighting colors
   - background color
+- **About Section**: Detailed project information, creator links, and contact options.
+- **Improved UI Overlay**: Consistent translucency and glassmorphism across controls, about, and tutorial dialogues.
 - **Fullscreen mode** for a more immersive experience
 - **Auto-hiding UI** to keep the visualizer unobstructed
 - **Persistent configuration** with local storage
@@ -63,8 +68,10 @@ sonic-blob/
 │   └── sonic-blob-config.json
 ├── src/
 │   ├── components/
+│   │   ├── AboutModal.tsx
 │   │   ├── ControlPanel.tsx
 │   │   ├── Scene.tsx
+│   │   ├── TutorialOverlay.tsx
 │   │   └── UIOverlay.tsx
 │   ├── App.tsx
 │   ├── audio.ts
@@ -114,7 +121,7 @@ sonic-blob/
 
 1.  Open any tab with audio playing (e.g., YouTube, Spotify).
 2.  Click the Sonic Blob extension icon.
-3.  Enjoy the visualization! Use the **Controls** button to customize the blob.
+3.  Enjoy the visualization! Use the **Controls** button to customize the blob and the **About** button to see more about the project.
 
 ## Built With
 
