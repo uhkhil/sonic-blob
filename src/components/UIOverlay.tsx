@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ControlPanel } from './ControlPanel';
+import { AboutModal } from './AboutModal';
 
 export const UIOverlay: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   // Auto-hide UI on inactivity
   useEffect(() => {
@@ -12,13 +14,13 @@ export const UIOverlay: React.FC = () => {
 
     const handleMouseMove = () => {
       setIsVisible(true);
-      if (!isPanelOpen) {
+      if (!isPanelOpen && !isAboutOpen) {
         document.body.style.cursor = 'default';
       }
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => {
         setIsVisible(false);
-        if (!isPanelOpen) {
+        if (!isPanelOpen && !isAboutOpen) {
           document.body.style.cursor = 'none';
         }
       }, 2500);
@@ -32,7 +34,7 @@ export const UIOverlay: React.FC = () => {
       clearTimeout(idleTimer);
       document.body.style.cursor = 'default';
     };
-  }, [isPanelOpen]);
+  }, [isPanelOpen, isAboutOpen]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -45,8 +47,9 @@ export const UIOverlay: React.FC = () => {
   // Document-level keyboard / fullscreen events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isPanelOpen) {
-        setIsPanelOpen(false);
+      if (e.key === 'Escape') {
+        if (isPanelOpen) setIsPanelOpen(false);
+        if (isAboutOpen) setIsAboutOpen(false);
       }
       if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
@@ -64,7 +67,7 @@ export const UIOverlay: React.FC = () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [isPanelOpen]);
+  }, [isPanelOpen, isAboutOpen]);
 
   const uiStyle = {
     opacity: isVisible ? 1 : 0,
@@ -153,6 +156,21 @@ export const UIOverlay: React.FC = () => {
           </svg>
         )}
       </button>
+
+      {/* About button */}
+      <button
+        style={uiStyle}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsAboutOpen(true);
+        }}
+        className="absolute z-10 bottom-5 right-5 pointer-events-auto cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full px-4 py-2 text-sm font-medium transition-all duration-500 focus:outline-none"
+        title="About Sonic Blob"
+      >
+        About
+      </button>
+
+      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
     </>
   );
 };

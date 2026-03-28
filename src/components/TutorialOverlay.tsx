@@ -11,7 +11,7 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md pointer-events-auto transition-opacity duration-500">
-      <div className="bg-white/10 border border-white/20 p-8 rounded-2xl max-w-sm text-center shadow-2xl mx-4 transform transition-all duration-500 scale-100 opacity-100">
+      <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-8 rounded-2xl max-w-sm text-center shadow-2xl mx-4 transform transition-all duration-500 scale-100 opacity-100 text-white">
         <div className="w-16 h-16 bg-gradient-to-tr from-[#5A189A] to-[#FF4FD8] rounded-full mx-auto mb-6 flex items-center justify-center shadow-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
