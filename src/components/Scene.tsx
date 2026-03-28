@@ -44,16 +44,16 @@ export const Scene: React.FC = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
 
-    const light1 = new THREE.DirectionalLight(config.primaryColor, 4.0);
-    light1.position.set(-5, -5, 5);
+    const light1 = new THREE.DirectionalLight(config.primaryColor, 8.0);
+    light1.position.set(-5, 5, 5); // Mirrored with light2 horizontally
     scene.add(light1);
 
-    const light2 = new THREE.DirectionalLight(config.accentColor, 4.0);
+    const light2 = new THREE.DirectionalLight(config.accentColor, 3.0);
     light2.position.set(5, 5, 5);
     scene.add(light2);
 
     const light3 = new THREE.DirectionalLight(0xffffff, 0.3);
-    light3.position.set(0, 0, 5);
+    light3.position.set(0, -5, 5); // Move the white fill light to the bottom to balance the top lights
     scene.add(light3);
 
     // --- Geometry & Material ---
