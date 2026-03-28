@@ -35,7 +35,7 @@ export const ControlPanel: React.FC<{
     };
   }, []);
 
-  const handleChange = (key: keyof Config, value: number | string) => {
+  const handleChange = (key: keyof Config, value: number | string | boolean) => {
     store.update({ [key]: value });
   };
 
@@ -65,7 +65,7 @@ export const ControlPanel: React.FC<{
         const parsed = JSON.parse(event.target!.result as string);
         // Basic validation logic
         const schema: Array<
-          [keyof Config, 'number' | 'string', number?, number?]
+          [keyof Config, 'number' | 'string' | 'boolean', number?, number?]
         > = [
           ['detail', 'number', 4, 128],
           ['baseRadius', 'number', 0.5, 2.0],
@@ -73,6 +73,7 @@ export const ControlPanel: React.FC<{
           ['sensitivity', 'number', 0.1, 3.0],
           ['rotationSpeed', 'number', 0.0, 5.0],
           ['audioSamples', 'number', 10, 128],
+          ['moveTogether', 'boolean'],
           ['primaryColor', 'string'],
           ['accentColor', 'string'],
           ['bgColor', 'string'],
@@ -206,6 +207,12 @@ export const ControlPanel: React.FC<{
           onChange={(v: number) => handleChange('audioSamples', v)}
           title="Number of frequencies captured"
         />
+        <ToggleRow
+          label="Move Together"
+          value={config.moveTogether}
+          onChange={(v: boolean) => handleChange('moveTogether', v)}
+          title="Toggle whether the whole blob wobbles together or ripples individually"
+        />
 
         <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">
           <div className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-1">
@@ -328,6 +335,36 @@ interface SliderRowProps {
   title?: string;
   onChange: (value: number) => void;
 }
+
+interface ToggleRowProps {
+  label: string;
+  value: boolean;
+  title?: string;
+  onChange: (value: boolean) => void;
+}
+
+const ToggleRow = ({ label, value, title, onChange }: ToggleRowProps) => {
+  return (
+    <div className="flex justify-between items-center" title={title}>
+      <label className="text-xs font-medium text-white/70 uppercase tracking-wider">
+        {label}
+      </label>
+      <button
+        type="button"
+        onClick={() => onChange(!value)}
+        className={`w-12 h-6 rounded-full p-1 transition-colors duration-200 border-none cursor-pointer ${
+          value ? 'bg-[#73b2c1]' : 'bg-white/20'
+        }`}
+      >
+        <div
+          className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200 ${
+            value ? 'translate-x-6' : 'translate-x-0'
+          }`}
+        />
+      </button>
+    </div>
+  );
+};
 
 const SliderRow = ({
   label,

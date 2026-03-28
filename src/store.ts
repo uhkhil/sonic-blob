@@ -5,6 +5,7 @@ export const DEFAULT_CONFIG = {
   sensitivity: 1.5,
   rotationSpeed: 0.1,
   audioSamples: 128,
+  moveTogether: true,
   primaryColor: '#5A189A',
   accentColor: '#FF4FD8',
   bgColor: '#0F0F14',
