@@ -70,7 +70,7 @@ export const ControlPanel: React.FC<{
         const schema: Array<
           [keyof Config, 'number' | 'string' | 'boolean', number?, number?]
         > = [
-          ['detail', 'number', 4, 128],
+          ['detail', 'number', 1, 240],
           ['baseRadius', 'number', 0.5, 2.0],
           ['rippleDepth', 'number', 0.1, 1.5],
           ['sensitivity', 'number', 0.1, 3.0],
@@ -157,9 +157,9 @@ export const ControlPanel: React.FC<{
         <SliderRow
           label="Shape Smoothness"
           value={config.detail}
-          min={4}
-          max={128}
-          step={4}
+          min={1}
+          max={240}
+          step={1}
           isInt
           onChange={(v: number) => handleChange('detail', v)}
           title="Higher = smoother but higher CPU usage"
