@@ -1,52 +1,118 @@
-export const DEFAULT_CONFIG = {
-  detail: 4,
-  baseRadius: 1.5,
-  rippleDepth: 1,
-  sensitivity: 1.5,
-  rotationSpeed: 0.1,
-  audioSamples: 128,
-  moveTogether: false,
-  primaryColor: '#5A189A',
-  accentColor: '#FF4FD8',
-  bgColor: '#0F0F14',
+import { INITIAL_THEMES } from './themes';
+import type { Theme } from './themes';
+
+export type Config = {
+  detail: number;
+  baseRadius: number;
+  rippleDepth: number;
+  sensitivity: number;
+  rotationSpeed: number;
+  audioSamples: number;
+  moveTogether: boolean;
+  primaryColor: string;
+  accentColor: string;
+  bgColor: string;
 };
 
-export type Config = typeof DEFAULT_CONFIG;
+export interface StoreState {
+  activeThemeIndex: number;
+  themes: Theme[];
+}
 
-// Simple reactive store
-type Listener = (config: Config) => void;
+type Listener = (state: StoreState) => void;
 
 class Store {
-  private state: Config;
+  private state: StoreState;
   private listeners: Set<Listener> = new Set();
+  private readonly STORAGE_KEY = 'sonic_blob_themes_v2';
 
   constructor() {
-    const saved = localStorage.getItem('sonic_blob_config');
-    this.state = saved
-      ? { ...DEFAULT_CONFIG, ...JSON.parse(saved) }
-      : { ...DEFAULT_CONFIG };
+    const saved = localStorage.getItem(this.STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Basic migration/validation
+        if (
+          Array.isArray(parsed.themes) &&
+          typeof parsed.activeThemeIndex === 'number'
+        ) {
+          this.state = parsed;
+        } else {
+          this.state = this.createInitialState();
+        }
+      } catch (e) {
+        console.error(e);
+        this.state = this.createInitialState();
+      }
+    } else {
+      this.state = this.createInitialState();
+    }
   }
 
-  get config(): Config {
+  private createInitialState(): StoreState {
+    // Deep copy INITIAL_THEMES to avoid mutating the exported constant
+    return {
+      activeThemeIndex: 0,
+      themes: JSON.parse(JSON.stringify(INITIAL_THEMES)),
+    };
+  }
+
+  get currentState(): StoreState {
     return this.state;
   }
 
+  // Gets the current active theme config
+  get config(): Config {
+    return this.state.themes[this.state.activeThemeIndex].config;
+  }
+
+  // Gets the active theme name
+  get activeThemeName(): string {
+    return this.state.themes[this.state.activeThemeIndex].name;
+  }
+
+  // Update actively selected theme's config
   update(partial: Partial<Config>) {
-    this.state = { ...this.state, ...partial };
+    const activeIndex = this.state.activeThemeIndex;
+    this.state.themes[activeIndex].config = {
+      ...this.state.themes[activeIndex].config,
+      ...partial,
+    };
     this.save();
     this.notify();
   }
 
+  // Reset ONLY the active theme back to its initial value
   reset() {
-    this.state = { ...DEFAULT_CONFIG };
+    const activeIndex = this.state.activeThemeIndex;
+    const initialTheme = INITIAL_THEMES[activeIndex];
+    this.state.themes[activeIndex].config = { ...initialTheme.config };
     this.save();
     this.notify();
   }
 
-  replace(fullConfig: Config) {
-    this.state = { ...fullConfig };
-    this.save();
-    this.notify();
+  setTheme(index: number) {
+    if (index >= 0 && index < this.state.themes.length) {
+      this.state.activeThemeIndex = index;
+      this.save();
+      this.notify();
+    }
+  }
+
+  nextTheme() {
+    const nextIndex =
+      this.state.activeThemeIndex === this.state.themes.length - 1
+        ? 0
+        : this.state.activeThemeIndex + 1;
+    this.setTheme(nextIndex);
+  }
+
+  prevTheme() {
+    const prevIndex =
+      this.state.activeThemeIndex === 0
+        ? this.state.themes.length - 1
+        : this.state.activeThemeIndex - 1;
+    this.setTheme(prevIndex);
   }
 
   subscribe(listener: Listener) {
@@ -57,11 +123,12 @@ class Store {
   }
 
   private save() {
-    localStorage.setItem('sonic_blob_config', JSON.stringify(this.state));
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
   }
 
   private notify() {
-    this.listeners.forEach((l) => l(this.state));
+    // Pass a new object reference to trigger React updates
+    this.listeners.forEach((l) => l({ ...this.state }));
   }
 }
 

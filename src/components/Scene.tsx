@@ -233,7 +233,8 @@ export const Scene = ({ onError, onSilence, onAudio }: SceneProps) => {
     };
 
     // --- Subscriptions ---
-    const unsubscribe = store.subscribe((newConfig) => {
+    const unsubscribe = store.subscribe((newState) => {
+      const newConfig = newState.themes[newState.activeThemeIndex].config;
       // Check what changed
       if (newConfig.detail !== config.detail) {
         recreateGeometry(newConfig.detail);

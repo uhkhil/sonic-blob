@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { store } from '../store';
 import { ControlPanel } from './ControlPanel';
 import { AboutModal } from './AboutModal';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 export const UIOverlay: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -54,6 +56,12 @@ export const UIOverlay: React.FC = () => {
       if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
       }
+      if (e.key === 'ArrowRight') {
+        store.nextTheme();
+      }
+      if (e.key === 'ArrowLeft') {
+        store.prevTheme();
+      }
     };
 
     const handleFullscreenChange = () => {
@@ -91,7 +99,7 @@ export const UIOverlay: React.FC = () => {
             e.stopPropagation();
             setIsPanelOpen(!isPanelOpen);
           }}
-          className="pointer-events-auto cursor-pointer self-start bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full px-4 py-2 text-sm font-medium transition-all duration-500 focus:outline-none"
+          className="pointer-events-auto cursor-pointer self-start bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white rounded-full px-4 py-2 text-sm font-medium transition-all duration-500 focus:outline-none"
         >
           <span className="flex items-center gap-2">
             <svg
@@ -117,7 +125,7 @@ export const UIOverlay: React.FC = () => {
       <button
         style={uiStyle}
         onClick={toggleFullscreen}
-        className="absolute z-10 top-5 right-5 pointer-events-auto cursor-pointer border-none bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full p-2.5 transition-all duration-500 focus:outline-none"
+        className="absolute z-10 top-5 right-5 pointer-events-auto cursor-pointer bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white rounded-full p-2.5 transition-all duration-500 focus:outline-none"
         title="Toggle Fullscreen (F)"
       >
         {!isFullscreen ? (
@@ -164,13 +172,21 @@ export const UIOverlay: React.FC = () => {
           e.stopPropagation();
           setIsAboutOpen(true);
         }}
-        className="absolute z-10 bottom-5 right-5 pointer-events-auto cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full px-4 py-2 text-sm font-medium transition-all duration-500 focus:outline-none"
+        className="absolute z-10 bottom-5 right-5 pointer-events-auto cursor-pointer bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white rounded-full px-4 py-2 text-sm font-medium transition-all duration-500 focus:outline-none"
         title="About Sonic Blob"
       >
         About
       </button>
 
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+
+      {/* Theme Switcher */}
+      <div
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex justify-center transition-all duration-500"
+        style={{ opacity: uiStyle.opacity }}
+      >
+        <ThemeSwitcher />
+      </div>
     </>
   );
 };

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { store } from '../store';
+import type { StoreState } from '../store';
 import type { Config } from '../store';
 
 export const ControlPanel: React.FC<{
   isOpen: boolean;
   onClose: () => void;
 }> = ({ isOpen, onClose }) => {
-  const [config, setConfig] = useState<Config>(store.config);
+  const [state, setState] = useState<StoreState>(store.currentState);
+  const config = state.themes[state.activeThemeIndex].config;
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export const ControlPanel: React.FC<{
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    const unsubscribe = store.subscribe(setConfig);
+    const unsubscribe = store.subscribe(setState);
     return () => {
       unsubscribe();
     };
@@ -44,80 +46,6 @@ export const ControlPanel: React.FC<{
 
   const handleReset = () => {
     store.reset();
-  };
-
-  const handleDownload = () => {
-    const blob = new Blob([JSON.stringify(store.config, null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sonic-blob-config.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const parsed = JSON.parse(event.target!.result as string);
-        // Basic validation logic
-        const schema: Array<
-          [keyof Config, 'number' | 'string' | 'boolean', number?, number?]
-        > = [
-          ['detail', 'number', 1, 240],
-          ['baseRadius', 'number', 0.5, 2.0],
-          ['rippleDepth', 'number', 0.1, 1.5],
-          ['sensitivity', 'number', 0.1, 3.0],
-          ['rotationSpeed', 'number', 0.0, 5.0],
-          ['audioSamples', 'number', 10, 128],
-          ['moveTogether', 'boolean'],
-          ['primaryColor', 'string'],
-          ['accentColor', 'string'],
-          ['bgColor', 'string'],
-        ];
-
-        const colorRe = /^#[0-9a-fA-F]{6}$/;
-        const errors: string[] = [];
-
-        for (const [key, type, min, max] of schema) {
-          const val = parsed[key];
-          if (val === undefined) {
-            errors.push(`Missing key: "${String(key)}"`);
-            continue;
-          }
-          if (typeof val !== type) {
-            errors.push(`Type error: "${String(key)}"`);
-            continue;
-          }
-          if (type === 'number' && min !== undefined && max !== undefined) {
-            if ((val as number) < min || (val as number) > max)
-              errors.push(`Range error: "${String(key)}"`);
-          }
-          if (type === 'string' && !colorRe.test(val as string))
-            errors.push(`Format error: "${String(key)}"`);
-        }
-
-        if (errors.length > 0) {
-          console.error(
-            '[Sonic Blob] Config upload failed:\n' + errors.join('\n'),
-          );
-          return;
-        }
-
-        store.replace(parsed as Config);
-        console.info('[Sonic Blob] Config loaded successfully.');
-      } catch {
-        console.error('[Sonic Blob] Config upload failed: invalid JSON file.');
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = ''; // reset input
   };
 
   // The CSS transition classes mirror the old raw manual classList modification
@@ -275,54 +203,6 @@ export const ControlPanel: React.FC<{
           </svg>
           Reset Config
         </button>
-      </div>
-
-      <div className="flex gap-3 mt-2">
-        <button
-          onClick={handleDownload}
-          className="w-full bg-white/10 border-none text-white cursor-pointer font-semibold py-2.5 rounded-xl hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          Download
-        </button>
-        <label className="w-full bg-white/10 border-none text-white cursor-pointer font-semibold py-2.5 rounded-xl hover:bg-white/20 transition-colors flex items-center justify-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          Upload
-          <input
-            type="file"
-            accept=".json,application/json"
-            className="hidden"
-            onChange={handleUpload}
-          />
-        </label>
       </div>
     </div>
   );
