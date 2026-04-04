@@ -150,8 +150,15 @@ class Store {
     };
   }
 
+  private saveTimer: ReturnType<typeof setTimeout> | null = null;
+
   private save() {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+    // Debounce localStorage writes so rapid theme switches don't block the main thread
+    if (this.saveTimer) clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+      this.saveTimer = null;
+    }, 3000);
   }
 
   private notify() {

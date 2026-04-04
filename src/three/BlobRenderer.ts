@@ -106,31 +106,36 @@ export class BlobRenderer {
     this.animate();
   }
 
+  private pendingGeometryDetail: number | null = null;
+  private geometryRafId: number = 0;
+
   /**
    * Updates only the visual elements that have changed when the theme is swapped.
    * This is much more efficient than destroying and recreating the whole scene.
    */
   public updateConfig(newConfig: Config) {
+    // Geometry recreation is expensive (especially at high detail levels).
+    // Debounce it so rapid theme switches don't queue multiple rebuilds.
     if (newConfig.detail !== this.config.detail) {
-      this.recreateGeometry(newConfig.detail);
+      this.pendingGeometryDetail = newConfig.detail;
+      cancelAnimationFrame(this.geometryRafId);
+      this.geometryRafId = requestAnimationFrame(() => {
+        if (this.pendingGeometryDetail !== null) {
+          this.recreateGeometry(this.pendingGeometryDetail);
+          this.pendingGeometryDetail = null;
+        }
+      });
     }
-    if (newConfig.bgColor !== this.config.bgColor) {
-      this.scene.background = new THREE.Color(newConfig.bgColor);
-      document.body.style.backgroundColor = newConfig.bgColor;
-    }
-    if (newConfig.primaryColor !== this.config.primaryColor) {
-      this.light1.color.set(newConfig.primaryColor);
-    }
-    if (newConfig.accentColor !== this.config.accentColor) {
-      this.light2.color.set(newConfig.accentColor);
-    }
-    if (newConfig.roughness !== this.config.roughness) {
-      this.material.roughness = newConfig.roughness;
-      this.material.clearcoatRoughness = newConfig.roughness;
-    }
-    if (newConfig.opacity !== this.config.opacity) {
-      this.material.transmission = 1.0 - newConfig.opacity;
-    }
+
+    // These property updates are cheap — just set them directly.
+    this.scene.background = new THREE.Color(newConfig.bgColor);
+    document.body.style.backgroundColor = newConfig.bgColor;
+    this.light1.color.set(newConfig.primaryColor);
+    this.light2.color.set(newConfig.accentColor);
+    this.material.roughness = newConfig.roughness;
+    this.material.clearcoatRoughness = newConfig.roughness;
+    this.material.transmission = 1.0 - newConfig.opacity;
+
     this.config = newConfig;
   }
 
@@ -139,6 +144,7 @@ export class BlobRenderer {
    */
   public dispose() {
     cancelAnimationFrame(this.animationId);
+    cancelAnimationFrame(this.geometryRafId);
     window.removeEventListener('resize', this.handleResize);
 
     this.geometry.dispose();
