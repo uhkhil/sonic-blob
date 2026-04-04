@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "zip": "npm run build && zip -r sonic-blob-extension.zip dist/",
-    "capture-screenshots": "node scripts/capture-screenshots.js"
+    "capture-screenshots": "node scripts/capture-screenshots.js",
+    "resize-icons": "node scripts/resize-icons.js"
   },
   "dependencies": {
     "react": "^19.2.4",
@@ -36,6 +37,7 @@
     "globals": "^17.4.0",
     "playwright": "^1.59.1",
     "prettier": "^3.8.1",
+    "sharp": "^0.34.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.2",
     "vite": "^8.0.0"
