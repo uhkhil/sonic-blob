@@ -85,6 +85,8 @@ export class BlobRenderer {
     // 5. Setup Mesh (Geometry + Material)
     this.geometry = new THREE.IcosahedronGeometry(1.2, this.config.detail);
     this.material = createBlobMaterial();
+    this.material.roughness = this.config.roughness;
+    this.material.clearcoatRoughness = this.config.roughness;
     this.blob = new THREE.Mesh(this.geometry, this.material);
     this.scene.add(this.blob);
 
@@ -114,6 +116,10 @@ export class BlobRenderer {
     }
     if (newConfig.accentColor !== this.config.accentColor) {
       this.light2.color.set(newConfig.accentColor);
+    }
+    if (newConfig.roughness !== this.config.roughness) {
+      this.material.roughness = newConfig.roughness;
+      this.material.clearcoatRoughness = newConfig.roughness;
     }
     this.config = newConfig;
   }

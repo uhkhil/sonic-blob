@@ -9,6 +9,7 @@ export type Config = {
   rotationSpeed: number;
   audioSamples: number;
   moveTogether: boolean;
+  roughness: number;
   primaryColor: string;
   accentColor: string;
   bgColor: string;

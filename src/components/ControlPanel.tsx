@@ -132,6 +132,15 @@ export const ControlPanel: React.FC<{
           onChange={(v: boolean) => handleChange('moveTogether', v)}
           title="Toggle whether the whole blob wobbles together or ripples individually"
         />
+        <SliderRow
+          label="Finish (Glossy to Matte)"
+          value={config.roughness}
+          min={0.0}
+          max={1.0}
+          step={0.05}
+          onChange={(v: number) => handleChange('roughness', v)}
+          title="Adjusts the finish from glossy (0.0) to matte (1.0)"
+        />
 
         <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-white/10">
           <div className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-1">
