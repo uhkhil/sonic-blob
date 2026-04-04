@@ -36,7 +36,30 @@ class Store {
           Array.isArray(parsed.themes) &&
           typeof parsed.activeThemeIndex === 'number'
         ) {
-          this.state = parsed;
+          // Reconcile saved themes with INITIAL_THEMES so new themes added to the code show up
+          const mergedThemes = INITIAL_THEMES.map((initialTheme) => {
+            const savedTheme = parsed.themes.find(
+              (t: Theme) => t.name === initialTheme.name,
+            );
+            if (savedTheme && savedTheme.config) {
+              return {
+                ...initialTheme,
+                config: { ...initialTheme.config, ...savedTheme.config },
+              };
+            }
+            return JSON.parse(JSON.stringify(initialTheme));
+          });
+
+          const validIndex =
+            parsed.activeThemeIndex >= 0 &&
+            parsed.activeThemeIndex < mergedThemes.length
+              ? parsed.activeThemeIndex
+              : 0;
+
+          this.state = {
+            activeThemeIndex: validIndex,
+            themes: mergedThemes,
+          };
         } else {
           this.state = this.createInitialState();
         }

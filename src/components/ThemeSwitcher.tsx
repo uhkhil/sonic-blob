@@ -29,7 +29,7 @@ export const ThemeSwitcher: React.FC = () => {
       <button
         onClick={handlePrevious}
         className="text-white/50 hover:text-white hover:bg-white/10 cursor-pointer transition-colors border-none bg-transparent p-1.5 flex items-center justify-center rounded-full"
-        title="Previous Theme"
+        title="Previous Theme (←)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@ export const ThemeSwitcher: React.FC = () => {
       <button
         onClick={handleNext}
         className="text-white/50 hover:text-white hover:bg-white/10 cursor-pointer transition-colors border-none bg-transparent p-1.5 flex items-center justify-center rounded-full"
-        title="Next Theme"
+        title="Next Theme (→)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

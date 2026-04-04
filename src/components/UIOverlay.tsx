@@ -99,6 +99,7 @@ export const UIOverlay: React.FC = () => {
             e.stopPropagation();
             setIsPanelOpen(!isPanelOpen);
           }}
+          title="Appearance Config"
           className="pointer-events-auto cursor-pointer self-start bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white rounded-full px-4 py-2 text-sm font-medium transition-all duration-500 focus:outline-none"
         >
           <span className="flex items-center gap-2">
