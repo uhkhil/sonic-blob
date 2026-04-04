@@ -5,6 +5,10 @@
 
 Sonic Blob is a Chrome extension that turns audio from the active browser tab into a fluid, immersive 3D music visualizer.
 
+<div align="center">
+  <img src="screenshots/slide-1.png" alt="Sonic Blob Preview" width="800" />
+</div>
+
 Built with React, TypeScript, Vite, and Three.js, it captures tab audio, opens a dedicated visualizer view, and renders a reactive blob that responds in real time. The project also includes configurable visuals, persistent settings, fullscreen mode, and import/export support for custom presets.
 
 ## Overview
