@@ -165,30 +165,24 @@ export const ControlPanel: React.FC<{
           <div className="flex justify-between items-center text-sm font-medium text-white/90">
             <label>Blob Lighting</label>
             <div className="flex gap-2">
-              <input
-                type="color"
+              <DebouncedColorInput
                 value={config.primaryColor}
-                onChange={(e) => handleChange('primaryColor', e.target.value)}
+                onChange={(v) => handleChange('primaryColor', v)}
                 title="Primary Color"
-                className="w-8 h-8 rounded cursor-pointer border-0 shadow-inner bg-transparent p-0 transform hover:scale-110 transition-transform"
               />
-              <input
-                type="color"
+              <DebouncedColorInput
                 value={config.accentColor}
-                onChange={(e) => handleChange('accentColor', e.target.value)}
+                onChange={(v) => handleChange('accentColor', v)}
                 title="Accent Color"
-                className="w-8 h-8 rounded cursor-pointer border-0 shadow-inner bg-transparent p-0 transform hover:scale-110 transition-transform"
               />
             </div>
           </div>
 
           <div className="flex justify-between items-center text-sm font-medium text-white/90">
             <label>Background</label>
-            <input
-              type="color"
+            <DebouncedColorInput
               value={config.bgColor}
-              onChange={(e) => handleChange('bgColor', e.target.value)}
-              className="w-8 h-8 rounded cursor-pointer border-0 shadow-inner bg-transparent p-0 transform hover:scale-110 transition-transform"
+              onChange={(v) => handleChange('bgColor', v)}
             />
           </div>
         </div>
@@ -258,21 +252,77 @@ const SliderRow = ({
   title,
   onChange,
 }: SliderRowProps) => {
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (localValue !== value) {
+        onChange(localValue);
+      }
+    }, 50);
+    return () => clearTimeout(handler);
+  }, [localValue, value, onChange]);
+
   return (
     <div className="flex flex-col gap-1.5" title={title}>
       <div className="flex justify-between text-xs font-medium text-white/70 uppercase tracking-wider">
         <label>{label}</label>
-        <span>{isInt ? Math.round(value) : Number(value).toFixed(2)}</span>
+        <span>
+          {isInt ? Math.round(localValue) : Number(localValue).toFixed(2)}
+        </span>
       </div>
       <input
         type="range"
         min={min}
         max={max}
         step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
+        value={localValue}
+        onChange={(e) => setLocalValue(parseFloat(e.target.value))}
         className="w-full accent-[#73b2c1] bg-white/20 h-1.5 rounded-lg appearance-none cursor-pointer"
       />
     </div>
+  );
+};
+
+interface DebouncedColorInputProps {
+  value: string;
+  title?: string;
+  onChange: (value: string) => void;
+  className?: string;
+}
+
+const DebouncedColorInput = ({
+  value,
+  title,
+  onChange,
+  className = 'w-8 h-8 rounded cursor-pointer border-0 shadow-inner bg-transparent p-0 transform hover:scale-110 transition-transform',
+}: DebouncedColorInputProps) => {
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (localValue !== value) {
+        onChange(localValue);
+      }
+    }, 50);
+    return () => clearTimeout(handler);
+  }, [localValue, value, onChange]);
+
+  return (
+    <input
+      type="color"
+      value={localValue}
+      onChange={(e) => setLocalValue(e.target.value)}
+      title={title}
+      className={className}
+    />
   );
 };
