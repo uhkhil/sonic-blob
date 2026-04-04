@@ -45,40 +45,6 @@
         pointer-events: none;
       }
 
-      /* ---- Theme Card (Clean, no browser frame) ---- */
-      .theme-card {
-        width: 380px;
-        height: 440px;
-        border-radius: 32px;
-        background: rgba(15, 12, 30, 0.5);
-        border: 1px solid rgba(139, 92, 246, 0.15);
-        backdrop-filter: blur(20px);
-        box-shadow:
-          0 0 40px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 40px;
-      }
-      .theme-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(168, 85, 247, 0.4),
-          transparent
-        );
-      }
-
       /* ---- Visual Item Container ---- */
       .visual-item {
         flex: 1;
@@ -89,8 +55,8 @@
         position: relative;
       }
       .visual-item img {
-        width: 85%;
-        height: 85%;
+        width: 350%;
+        height: 350%;
         object-fit: contain;
         filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.6));
       }
@@ -230,9 +196,9 @@
       ></div>
 
       <!-- ---- Headline ---- -->
-      <div class="relative z-10 text-center mb-10">
+      <div class="relative z-10 text-center mb-14">
         <h1
-          class="text-[44px] font-extrabold text-white leading-tight tracking-tight"
+          class="text-6xl font-extrabold text-white leading-tight tracking-tight"
         >
           Tune the look to
           <span
@@ -240,70 +206,28 @@
             >match your vibe</span
           >
         </h1>
-        <p
-          class="text-purple-200/70 text-lg font-light mt-4 max-w-lg mx-auto leading-relaxed"
-        >
-          Experiment with colors and styling to create a visualizer that feels
-          more like you.
-        </p>
       </div>
 
       <!-- ---- Three theme cards ---- -->
-      <div class="relative z-10 flex items-center gap-8">
+      <div class="relative z-10 flex items-center gap-12">
         <!-- Theme 1: Amethyst -->
         <div class="theme-card">
-          <span
-            class="theme-label"
-            style="
-              background: linear-gradient(135deg, #a782ff, #ff4fd8);
-              -webkit-background-clip: text;
-            "
-            >Amethyst</span
-          >
           <div class="visual-item glow-purple">
             <img src="assets/amethyst.png" alt="Amethyst Theme" />
-          </div>
-          <div class="swatch-group">
-            <div class="swatch" style="background: #8000ff"></div>
-            <div class="swatch" style="background: #ff4fd8"></div>
           </div>
         </div>
 
         <!-- Theme 2: Cyberpunk (central focus) -->
         <div class="theme-card scale-110">
-          <span
-            class="theme-label"
-            style="
-              background: linear-gradient(135deg, #00d2df, #ff003c);
-              -webkit-background-clip: text;
-            "
-            >Cyberpunk</span
-          >
           <div class="visual-item glow-cyber">
             <img src="assets/cyberpunk.png" alt="Cyberpunk Theme" />
-          </div>
-          <div class="swatch-group">
-            <div class="swatch" style="background: #00858f"></div>
-            <div class="swatch" style="background: #ff003c"></div>
           </div>
         </div>
 
         <!-- Theme 3: Solar Flare -->
         <div class="theme-card">
-          <span
-            class="theme-label"
-            style="
-              background: linear-gradient(135deg, #ff8c42, #ff5f00);
-              -webkit-background-clip: text;
-            "
-            >Solar Flare</span
-          >
           <div class="visual-item glow-solar">
             <img src="assets/solar-flare.png" alt="Solar Flare Theme" />
-          </div>
-          <div class="swatch-group">
-            <div class="swatch" style="background: #ff3300"></div>
-            <div class="swatch" style="background: #ff9900"></div>
           </div>
         </div>
       </div>
