@@ -1,7 +1,17 @@
-chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab.id) return;
+/**
+ * @fileoverview Background script for the Sonic Blob Chrome Extension.
+ *
+ * This file runs in the background and is responsible for:
+ * 1. Handling the extension action click (extension icon in the toolbar).
+ * 2. Managing the lifecycle of the visualizer tab (ensuring only one instance runs).
+ * 3. Handling runtime messages to provide fresh media stream IDs for audio capture via `chrome.tabCapture`.
+ */
 
-  // Close any existing Sonic Blob tabs before opening a new one
+/**
+ * Closes any existing Sonic Blob visualizer tabs.
+ * This ensures only one visualizer instance runs at a time.
+ */
+async function closeExistingVisualizerTabs(): Promise<void> {
   const visualizerUrl = chrome.runtime.getURL('index.html');
   const existing = await chrome.tabs.query({ url: visualizerUrl + '*' });
   if (existing.length > 0) {
@@ -14,6 +24,18 @@ chrome.action.onClicked.addListener(async (tab) => {
     // Small delay to ensure tabs are fully removed and resources freed
     await new Promise((r) => setTimeout(r, 100));
   }
+}
+
+/**
+ * Handles the action click event. Closes existing visualizers and
+ * opens a new visualizer targeting the clicked tab's audio.
+ *
+ * @param tab - The Chrome tab that was active when the extension action was clicked.
+ */
+async function handleActionClick(tab: chrome.tabs.Tab): Promise<void> {
+  if (!tab.id) return;
+
+  await closeExistingVisualizerTabs();
 
   // Get the target tab ID (the tab whose audio we want to capture)
   const targetTabId = tab.id;
@@ -22,10 +44,22 @@ chrome.action.onClicked.addListener(async (tab) => {
   // This allows the visualizer to request fresh streamId tokens as needed.
   const url = chrome.runtime.getURL(`index.html?targetTabId=${targetTabId}`);
   chrome.tabs.create({ url });
-});
+}
 
-// Handle requests for fresh streamId tokens from the visualizer
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+/**
+ * Handles messages sent from the visualizer or other parts of the extension.
+ * Currently supports requesting a fresh media stream ID for tab capture.
+ *
+ * @param message - The message object containing the request details.
+ * @param _sender - The sender of the message.
+ * @param sendResponse - Callback function to send a response back to the sender.
+ * @returns True if the response will be sent asynchronously, otherwise void.
+ */
+function handleRuntimeMessage(
+  message: { type?: string; targetTabId?: number },
+  _sender: chrome.runtime.MessageSender,
+  sendResponse: (response?: unknown) => void,
+): boolean | void {
   if (message.type === 'GET_STREAM_ID' && message.targetTabId) {
     chrome.tabCapture.getMediaStreamId(
       { targetTabId: message.targetTabId },
@@ -35,4 +69,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     );
     return true; // Keep message channel open for async response
   }
-});
+}
+
+// Register event listeners
+chrome.action.onClicked.addListener(handleActionClick);
+chrome.runtime.onMessage.addListener(handleRuntimeMessage);

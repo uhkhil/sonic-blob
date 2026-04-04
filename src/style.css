@@ -3,7 +3,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  background-color: #73b2c1; /* Match initial scene background */
+  background-color: #0f0f14; /* Match initial scene background */
 }
 
 /* No focus rings in this immersive visualizer */
