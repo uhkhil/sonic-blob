@@ -85,6 +85,10 @@ export class BlobRenderer {
     // 5. Setup Mesh (Geometry + Material)
     this.geometry = new THREE.IcosahedronGeometry(1.2, this.config.detail);
     this.material = createBlobMaterial();
+    this.material.transparent = true; // Required for transmission
+    this.material.transmission = 1.0 - this.config.opacity;
+    this.material.opacity = 1.0; // Keep solid so transmission calculates physically based volume
+    this.material.thickness = 1.5; // Simulate volumetric thickness for refraction effect
     this.material.roughness = this.config.roughness;
     this.material.clearcoatRoughness = this.config.roughness;
     this.blob = new THREE.Mesh(this.geometry, this.material);
@@ -120,6 +124,9 @@ export class BlobRenderer {
     if (newConfig.roughness !== this.config.roughness) {
       this.material.roughness = newConfig.roughness;
       this.material.clearcoatRoughness = newConfig.roughness;
+    }
+    if (newConfig.opacity !== this.config.opacity) {
+      this.material.transmission = 1.0 - newConfig.opacity;
     }
     this.config = newConfig;
   }

@@ -10,6 +10,7 @@ export type Config = {
   audioSamples: number;
   moveTogether: boolean;
   roughness: number;
+  opacity: number;
   primaryColor: string;
   accentColor: string;
   bgColor: string;
