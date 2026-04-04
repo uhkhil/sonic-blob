@@ -1,9 +1,15 @@
+/**
+ * @file Overlay guiding the user to start audio playback.
+ */
 import React from 'react';
 
 interface TutorialOverlayProps {
   visible: boolean;
 }
 
+/**
+ * Full-screen overlay instructing the user to play audio when silence is detected.
+ */
 export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
   visible,
 }) => {

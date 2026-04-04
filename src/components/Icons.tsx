@@ -1,9 +1,15 @@
+/**
+ * @file Reusable SVG icons for the application UI.
+ */
 import React from 'react';
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number | string;
 }
 
+/**
+ * Close icon (X).
+ */
 export const CloseIcon: React.FC<IconProps> = ({ size = 20, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -22,6 +28,9 @@ export const CloseIcon: React.FC<IconProps> = ({ size = 20, ...props }) => (
   </svg>
 );
 
+/**
+ * Website (globe) icon.
+ */
 export const WebsiteIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -41,6 +50,9 @@ export const WebsiteIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
+/**
+ * GitHub (mark) icon.
+ */
 export const GitHubIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -58,6 +70,9 @@ export const GitHubIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
+/**
+ * Email (envelope) icon.
+ */
 export const EmailIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -76,6 +91,9 @@ export const EmailIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
+/**
+ * Reset (rewind/refresh) icon.
+ */
 export const ResetIcon: React.FC<IconProps> = ({ size = 16, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -94,6 +112,9 @@ export const ResetIcon: React.FC<IconProps> = ({ size = 16, ...props }) => (
   </svg>
 );
 
+/**
+ * Chevron pointing left.
+ */
 export const ChevronLeftIcon: React.FC<IconProps> = ({
   size = 20,
   ...props
@@ -114,6 +135,9 @@ export const ChevronLeftIcon: React.FC<IconProps> = ({
   </svg>
 );
 
+/**
+ * Chevron pointing right.
+ */
 export const ChevronRightIcon: React.FC<IconProps> = ({
   size = 20,
   ...props
@@ -134,6 +158,9 @@ export const ChevronRightIcon: React.FC<IconProps> = ({
   </svg>
 );
 
+/**
+ * Settings (gear/sliders) icon.
+ */
 export const SettingsIcon: React.FC<IconProps> = ({ size = 16, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -152,6 +179,9 @@ export const SettingsIcon: React.FC<IconProps> = ({ size = 16, ...props }) => (
   </svg>
 );
 
+/**
+ * Maximize (expand arrows) icon.
+ */
 export const MaximizeIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -172,6 +202,9 @@ export const MaximizeIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
+/**
+ * Minimize (contract arrows) icon.
+ */
 export const MinimizeIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

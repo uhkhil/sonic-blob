@@ -1,3 +1,6 @@
+/**
+ * @file The 3D scene component orchestrating the WebGL renderer and audio input.
+ */
 import { useEffect, useRef } from 'react';
 import { store } from '../store';
 import { startAudioCapture } from '../audio';
@@ -9,6 +12,9 @@ export interface SceneProps {
   onAudio?: () => void;
 }
 
+/**
+ * Renders the 3D WebGL canvas that displays the reactive audio visualizer.
+ */
 export const Scene = ({ onError, onSilence, onAudio }: SceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 

@@ -1,9 +1,15 @@
+/**
+ * @file Control panel for adjusting the blob's appearance and behavior.
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { store } from '../store';
 import type { StoreState } from '../store';
 import type { Config } from '../store';
 import { CloseIcon, ResetIcon } from './Icons';
 
+/**
+ * A floating control panel that allows users to tweak visualizer configuration options.
+ */
 export const ControlPanel: React.FC<{
   isOpen: boolean;
   onClose: () => void;

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Audio processing module for the Sonic Blob Chrome Extension.
+ * @file Audio processing module for the Sonic Blob Chrome Extension.
  *
  * This file is responsible for capturing audio streams using tab media capture
  * (via stream ID tokens from the background script) and analyzing the frequency data

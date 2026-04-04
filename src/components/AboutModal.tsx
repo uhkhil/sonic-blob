@@ -1,3 +1,6 @@
+/**
+ * @file Modal dialog displaying information about the Sonic Blob extension.
+ */
 import React from 'react';
 import { CloseIcon, WebsiteIcon, GitHubIcon, EmailIcon } from './Icons';
 
@@ -6,6 +9,9 @@ interface AboutModalProps {
   onClose: () => void;
 }
 
+/**
+ * Renders the About modal containing project description and contact links.
+ */
 export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 

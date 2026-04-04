@@ -1,3 +1,6 @@
+/**
+ * @file Main UI overlay container managing panels, modal toggles, and inactivity.
+ */
 import React, { useState, useEffect } from 'react';
 import { store } from '../store';
 import { ControlPanel } from './ControlPanel';
@@ -5,6 +8,9 @@ import { AboutModal } from './AboutModal';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { SettingsIcon, MaximizeIcon, MinimizeIcon } from './Icons';
 
+/**
+ * Overlay component rendering UI buttons and managing mouse inactivity fading.
+ */
 export const UIOverlay: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);

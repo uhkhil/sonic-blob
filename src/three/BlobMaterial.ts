@@ -1,3 +1,6 @@
+/**
+ * @file Custom WebGL material definition for the 3D blob mesh with injected shaders.
+ */
 import * as THREE from 'three';
 
 /**

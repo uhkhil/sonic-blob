@@ -1,3 +1,6 @@
+/**
+ * @file Core 3D engine class encapsulating Three.js rendering and animation loop.
+ */
 import * as THREE from 'three';
 import { createBlobMaterial, blobShaderUniforms } from './BlobMaterial';
 import { analyzeFrequencyData } from '../audio';

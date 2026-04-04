@@ -1,3 +1,6 @@
+/**
+ * @file Theme configuration and state management store for the application.
+ */
 import { INITIAL_THEMES } from './themes';
 import type { Theme } from './themes';
 
@@ -157,6 +160,9 @@ class Store {
   }
 }
 
+/**
+ * Store access hook for subscribing to state updates.
+ */
 export const useStore = () => {
   return store;
 };

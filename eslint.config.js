@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import jsdoc from 'eslint-plugin-jsdoc';
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -21,6 +22,7 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      jsdoc: jsdoc,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -29,6 +31,30 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       'prettier/prettier': 'error',
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          publicOnly: true,
+          require: {
+            FunctionDeclaration: true,
+            ArrowFunctionExpression: true,
+            FunctionExpression: true,
+            ClassDeclaration: true,
+          },
+        },
+      ],
+      'jsdoc/require-file-overview': [
+        'error',
+        {
+          tags: {
+            file: {
+              initialCommentsOnly: true,
+              mustExist: true,
+              preventDuplicates: true,
+            },
+          },
+        },
+      ],
     },
   },
 );

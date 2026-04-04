@@ -1,3 +1,6 @@
+/**
+ * @file Defines standard themes and their visual configurations.
+ */
 import type { Config } from './store';
 
 export interface Theme {

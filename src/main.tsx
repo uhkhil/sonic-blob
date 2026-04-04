@@ -1,3 +1,6 @@
+/**
+ * @file Application entry point bootstrapping React into the DOM.
+ */
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';

@@ -1,3 +1,6 @@
+/**
+ * @file Main Application component linking the 3D scene, themes, and UI.
+ */
 import React, { useState, useCallback } from 'react';
 import { Scene } from './components/Scene';
 import { UIOverlay } from './components/UIOverlay';
@@ -5,6 +8,9 @@ import { TutorialOverlay } from './components/TutorialOverlay';
 
 import './style.css';
 
+/**
+ * The root Application component handling tutorial visibility and scene states.
+ */
 export const App: React.FC = () => {
   const [showTutorial, setShowTutorial] = useState(false);
 

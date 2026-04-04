@@ -1,5 +1,5 @@
 /**
- * @fileoverview Background script for the Sonic Blob Chrome Extension.
+ * @file Background script for the Sonic Blob Chrome Extension.
  *
  * This file runs in the background and is responsible for:
  * 1. Handling the extension action click (extension icon in the toolbar).

@@ -1,8 +1,14 @@
+/**
+ * @file UI component for cycling through preset configuration themes.
+ */
 import React, { useState, useEffect } from 'react';
 import { store } from '../store';
 import type { StoreState } from '../store';
 import { ChevronLeftIcon, ChevronRightIcon } from './Icons';
 
+/**
+ * A horizontal selector to navigate left and right through available visual themes.
+ */
 export const ThemeSwitcher: React.FC = () => {
   const [state, setState] = useState<StoreState>(store.currentState);
 
