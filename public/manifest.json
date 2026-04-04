@@ -1,17 +1,29 @@
 {
   "manifest_version": 3,
   "name": "Sonic Blob",
+  "short_name": "Sonic Blob",
   "version": "0.1.0",
   "description": "Visualize audio playing in your browser with an animated blob that reacts in real time.",
+  "offline_enabled": true,
   "background": {
     "service_worker": "background.js"
   },
   "icons": {
-    "128": "logo.png"
+    "16": "icons/16.png",
+    "24": "icons/24.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
   },
   "action": {
     "default_title": "Sonic Blob",
-    "default_icon": "logo.png"
+    "default_icon": {
+      "16": "icons/16.png",
+      "24": "icons/24.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
   },
   "permissions": ["tabCapture", "activeTab", "tabs"],
   "host_permissions": ["<all_urls>"]
