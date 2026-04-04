@@ -117,3 +117,56 @@ export async function startAudioCapture(onData: (data: Uint8Array) => void) {
     throw error;
   }
 }
+
+/**
+ * Audio Analysis Helper
+ * Takes raw frequency data from the microphone and calculates three values:
+ * - currentVolume: Overall loudness
+ * - currentBass: Low frequency bumps
+ * - currentTreble: High frequency sounds
+ *
+ * These values are normalized between 0.0 and 1.0.
+ */
+export function analyzeFrequencyData(
+  audioData: Uint8Array | null,
+  audioSamples: number,
+) {
+  let currentVolume = 0;
+  let currentBass = 0;
+  let currentTreble = 0;
+
+  if (audioData && audioData.length > 0) {
+    const captureLen = Math.floor(audioSamples);
+    const actualLen = Math.min(captureLen, audioData.length);
+
+    if (actualLen > 0) {
+      // 1. Calculate Overall Volume (Average of all captured frequencies)
+      let volSum = 0;
+      for (let i = 0; i < actualLen; i++) {
+        volSum += audioData[i];
+      }
+      currentVolume = volSum / actualLen / 255.0; // 255 is the max byte value
+
+      // 2. Calculate Bass (Average of the lower 10% of frequency bins)
+      const bassEnd = Math.max(1, Math.floor(actualLen * 0.1));
+      let bassSum = 0;
+      for (let i = 0; i < bassEnd; i++) {
+        bassSum += audioData[i];
+      }
+      currentBass = bassSum / bassEnd / 255.0;
+
+      // 3. Calculate Treble (Average of the upper 60% of frequency bins)
+      const trebleStart = Math.min(actualLen - 1, Math.floor(actualLen * 0.4));
+      const trebleCount = actualLen - trebleStart;
+      let trebleSum = 0;
+      if (trebleCount > 0) {
+        for (let i = trebleStart; i < actualLen; i++) {
+          trebleSum += audioData[i];
+        }
+        currentTreble = trebleSum / trebleCount / 255.0;
+      }
+    }
+  }
+
+  return { currentVolume, currentBass, currentTreble };
+}
