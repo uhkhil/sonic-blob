@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sonic Blob — Slide 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+      }
+
+      /* ---- Canvas ---- */
+      .slide-canvas {
+        width: 1280px;
+        height: 800px;
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(
+          ellipse at 50% 50%,
+          #1a103d 0%,
+          #0a0a1a 80%
+        );
+      }
+
+      /* ---- Ambient orbs ---- */
+      .bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+      }
+
+      /* ---- Theme card (mini browser frame) ---- */
+      .theme-card {
+        width: 340px;
+        height: 400px;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+      .theme-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        z-index: 1;
+      }
+
+      .theme-dots {
+        display: flex;
+        gap: 5px;
+        padding: 10px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .theme-dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      /* ---- Theme blob ---- */
+      .theme-blob {
+        width: 120px;
+        height: 120px;
+        border-radius: 42% 58% 63% 37% / 45% 55% 45% 55%;
+      }
+
+      /* ---- Theme: Neon Purple ---- */
+      .theme-neon .theme-card {
+        background: rgba(20, 10, 45, 0.85);
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        box-shadow:
+          0 0 50px rgba(168, 85, 247, 0.12),
+          0 20px 40px rgba(0, 0, 0, 0.4);
+      }
+      .theme-neon .theme-card::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(168, 85, 247, 0.4),
+          transparent
+        );
+      }
+      .theme-neon .theme-blob {
+        background: linear-gradient(135deg, #7c3aed, #a855f7, #c084fc);
+        box-shadow:
+          0 0 50px rgba(168, 85, 247, 0.5),
+          0 0 100px rgba(124, 58, 237, 0.3);
+      }
+
+      /* ---- Theme: Dreamy Pink ---- */
+      .theme-dreamy .theme-card {
+        background: rgba(30, 12, 35, 0.85);
+        border: 1px solid rgba(236, 72, 153, 0.25);
+        box-shadow:
+          0 0 50px rgba(236, 72, 153, 0.1),
+          0 20px 40px rgba(0, 0, 0, 0.4);
+      }
+      .theme-dreamy .theme-card::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(236, 72, 153, 0.4),
+          transparent
+        );
+      }
+      .theme-dreamy .theme-blob {
+        background: linear-gradient(135deg, #ec4899, #f472b6, #c084fc);
+        box-shadow:
+          0 0 50px rgba(236, 72, 153, 0.5),
+          0 0 100px rgba(192, 132, 252, 0.2);
+      }
+
+      /* ---- Theme: Gold Dark ---- */
+      .theme-gold .theme-card {
+        background: rgba(20, 16, 10, 0.85);
+        border: 1px solid rgba(234, 179, 8, 0.2);
+        box-shadow:
+          0 0 50px rgba(234, 179, 8, 0.08),
+          0 20px 40px rgba(0, 0, 0, 0.4);
+      }
+      .theme-gold .theme-card::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(234, 179, 8, 0.3),
+          transparent
+        );
+      }
+      .theme-gold .theme-blob {
+        background: linear-gradient(135deg, #ca8a04, #eab308, #fbbf24);
+        box-shadow:
+          0 0 50px rgba(234, 179, 8, 0.4),
+          0 0 100px rgba(202, 138, 4, 0.2);
+      }
+
+      /* ---- Color swatch chips ---- */
+      .color-swatch {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .color-swatch.active {
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 8px currentColor;
+      }
+
+      /* ---- Particles ---- */
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0.4;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-950 flex items-center justify-center min-h-screen">
+    <!-- ======== SLIDE CANVAS (1280x800) ======== -->
+    <div class="slide-canvas flex flex-col items-center justify-center">
+      <!-- Background orbs -->
+      <div
+        class="bg-orb"
+        style="
+          width: 500px;
+          height: 500px;
+          background: rgba(139, 92, 246, 0.08);
+          top: -50px;
+          left: 10%;
+        "
+      ></div>
+      <div
+        class="bg-orb"
+        style="
+          width: 400px;
+          height: 400px;
+          background: rgba(236, 72, 153, 0.06);
+          bottom: -50px;
+          right: 15%;
+        "
+      ></div>
+      <div
+        class="bg-orb"
+        style="
+          width: 350px;
+          height: 350px;
+          background: rgba(234, 179, 8, 0.04);
+          bottom: 20%;
+          left: 60%;
+        "
+      ></div>
+
+      <!-- Particles -->
+      <div
+        class="particle"
+        style="
+          width: 3px;
+          height: 3px;
+          background: rgba(168, 85, 247, 0.5);
+          top: 10%;
+          left: 8%;
+        "
+      ></div>
+      <div
+        class="particle"
+        style="
+          width: 4px;
+          height: 4px;
+          background: rgba(236, 72, 153, 0.4);
+          top: 85%;
+          right: 10%;
+        "
+      ></div>
+      <div
+        class="particle"
+        style="
+          width: 3px;
+          height: 3px;
+          background: rgba(234, 179, 8, 0.4);
+          top: 20%;
+          right: 5%;
+        "
+      ></div>
+      <div
+        class="particle"
+        style="
+          width: 4px;
+          height: 4px;
+          background: rgba(168, 85, 247, 0.3);
+          bottom: 12%;
+          left: 15%;
+        "
+      ></div>
+
+      <!-- ---- Headline ---- -->
+      <div class="relative z-10 text-center mb-10">
+        <h1
+          class="text-[44px] font-extrabold text-white leading-tight tracking-tight"
+        >
+          Tune the look to
+          <span
+            class="bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent"
+            >match your vibe</span
+          >
+        </h1>
+        <p
+          class="text-purple-200/70 text-lg font-light mt-4 max-w-lg mx-auto leading-relaxed"
+        >
+          Experiment with colors and styling to create a visualizer that feels
+          more like you.
+        </p>
+      </div>
+
+      <!-- ---- Three theme cards ---- -->
+      <div class="relative z-10 flex items-center gap-6">
+        <!-- Theme 1: Neon Purple -->
+        <div class="theme-neon">
+          <div class="theme-card">
+            <div class="theme-dots">
+              <span style="background: rgba(255, 95, 86, 0.5)"></span>
+              <span style="background: rgba(255, 189, 46, 0.5)"></span>
+              <span style="background: rgba(39, 201, 63, 0.5)"></span>
+            </div>
+            <!-- Blob area -->
+            <div
+              class="flex items-center justify-center flex-col"
+              style="
+                height: calc(100% - 36px);
+                background: radial-gradient(
+                  circle at 50% 50%,
+                  rgba(124, 58, 237, 0.1),
+                  transparent 60%
+                );
+              "
+            >
+              <div class="theme-blob" style="animation-delay: 0s"></div>
+              <!-- Label -->
+              <p
+                class="text-purple-300/60 text-xs font-medium mt-6 tracking-wide uppercase"
+              >
+                Neon Purple
+              </p>
+              <!-- Color swatches -->
+              <div class="flex gap-2 mt-3">
+                <div
+                  class="color-swatch active"
+                  style="background: #7c3aed; color: #7c3aed"
+                ></div>
+                <div class="color-swatch" style="background: #a855f7"></div>
+                <div class="color-swatch" style="background: #c084fc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme 2: Dreamy Pink (center, slightly elevated) -->
+        <div class="theme-dreamy -mt-4">
+          <div class="theme-card" style="height: 420px">
+            <div class="theme-dots">
+              <span style="background: rgba(255, 95, 86, 0.5)"></span>
+              <span style="background: rgba(255, 189, 46, 0.5)"></span>
+              <span style="background: rgba(39, 201, 63, 0.5)"></span>
+            </div>
+            <div
+              class="flex items-center justify-center flex-col"
+              style="
+                height: calc(100% - 36px);
+                background: radial-gradient(
+                  circle at 50% 50%,
+                  rgba(236, 72, 153, 0.08),
+                  transparent 60%
+                );
+              "
+            >
+              <div class="theme-blob" style="animation-delay: 0.8s"></div>
+              <p
+                class="text-pink-300/60 text-xs font-medium mt-6 tracking-wide uppercase"
+              >
+                Dreamy Pink
+              </p>
+              <div class="flex gap-2 mt-3">
+                <div class="color-swatch" style="background: #ec4899"></div>
+                <div
+                  class="color-swatch active"
+                  style="background: #f472b6; color: #f472b6"
+                ></div>
+                <div class="color-swatch" style="background: #c084fc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme 3: Gold Dark -->
+        <div class="theme-gold">
+          <div class="theme-card">
+            <div class="theme-dots">
+              <span style="background: rgba(255, 95, 86, 0.5)"></span>
+              <span style="background: rgba(255, 189, 46, 0.5)"></span>
+              <span style="background: rgba(39, 201, 63, 0.5)"></span>
+            </div>
+            <div
+              class="flex items-center justify-center flex-col"
+              style="
+                height: calc(100% - 36px);
+                background: radial-gradient(
+                  circle at 50% 50%,
+                  rgba(234, 179, 8, 0.06),
+                  transparent 60%
+                );
+              "
+            >
+              <div class="theme-blob" style="animation-delay: 1.6s"></div>
+              <p
+                class="text-yellow-300/60 text-xs font-medium mt-6 tracking-wide uppercase"
+              >
+                Dark Gold
+              </p>
+              <div class="flex gap-2 mt-3">
+                <div class="color-swatch" style="background: #ca8a04"></div>
+                <div class="color-swatch" style="background: #eab308"></div>
+                <div
+                  class="color-swatch active"
+                  style="background: #fbbf24; color: #fbbf24"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ======== END SLIDE CANVAS ======== -->
+
+    <script src="assets/nav.js"></script>
+  </body>
+</html>

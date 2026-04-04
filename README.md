@@ -37,6 +37,7 @@ The project focuses on:
 - **Auto-hiding UI** to keep the visualizer unobstructed
 - **Persistent configuration** with local storage
 - **Preset export/import** through JSON config download and upload
+- **Automated Store Screenshots**: Specialized Playwright-based system for generating high-quality Chrome Web Store promotional assets.
 
 ## Tech Stack
 
@@ -79,6 +80,12 @@ sonic-blob/
 │   ├── main.tsx
 │   ├── store.ts
 │   └── style.css
+├── screenshots/
+│   ├── assets/        (Source assets & navigation script)
+│   ├── slide-1.html   (Promotional slide templates)
+│   └── slide-1.png    (Generated store assets)
+├── scripts/
+│   └── capture-screenshots.js (Playwright automation)
 ├── .prettierrc
 ├── eslint.config.js
 ├── index.html
@@ -116,6 +123,7 @@ sonic-blob/
 - `npm run preview`: Preview the production build locally.
 - `npm run lint`: Run ESLint to analyze code quality.
 - `npm run format`: Format the code using Prettier.
+- `npm run capture-screenshots`: Automatically generate high-quality 1280x800 promotional screenshots for the Chrome Web Store using Playwright.
 
 ### Usage
 

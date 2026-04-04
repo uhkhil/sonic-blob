@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sonic Blob — Slide 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+      }
+
+      /* ---- Canvas ---- */
+      .slide-canvas {
+        width: 1280px;
+        height: 800px;
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(
+          ellipse at 50% 40%,
+          #1a103d 0%,
+          #0a0a1a 80%
+        );
+      }
+
+      /* ---- Ambient orbs ---- */
+      .bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+      }
+
+      /* ---- Step card (Clean, no browser frame) ---- */
+      .step-card {
+        width: 300px;
+        height: 340px;
+        border-radius: 32px;
+        background: rgba(15, 12, 30, 0.5);
+        border: 1px solid rgba(139, 92, 246, 0.15);
+        backdrop-filter: blur(20px);
+        box-shadow:
+          0 0 40px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+      }
+      .step-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(168, 85, 247, 0.4),
+          transparent
+        );
+      }
+
+      /* ---- Visual Item Containers ---- */
+      .visual-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        position: relative;
+      }
+
+      /* ---- Music Icon Glow ---- */
+      .music-glow {
+        filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4))
+          drop-shadow(0 0 40px rgba(236, 72, 153, 0.2));
+      }
+
+      /* ---- Pointer Icon ---- */
+      .pointer-icon {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        bottom: 10%;
+        right: 15%;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+        transform: rotate(-15deg);
+        pointer-events: none;
+      }
+
+      /* ---- Step Labels (High Visibility) ---- */
+      .step-label {
+        font-size: 16px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.25em;
+        margin-bottom: 24px;
+        background: linear-gradient(135deg, #c084fc, #f472b6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 5px 15px rgba(168, 85, 247, 0.2);
+      }
+
+      /* ---- Step Description (Reduced Visibility) ---- */
+      .step-desc {
+        text-align: center;
+        font-size: 15px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.35);
+        margin-top: 24px;
+        line-height: 1.5;
+        max-width: 240px;
+      }
+
+      /* ---- Floating particles ---- */
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0.4;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-950 flex items-center justify-center min-h-screen">
+    <!-- ======== SLIDE CANVAS (1280x800) ======== -->
+    <div class="slide-canvas flex flex-col items-center justify-center">
+      <!-- Background orbs -->
+      <div
+        class="bg-orb"
+        style="
+          width: 500px;
+          height: 500px;
+          background: rgba(139, 92, 246, 0.1);
+          top: -100px;
+          right: -50px;
+        "
+      ></div>
+      <div
+        class="bg-orb"
+        style="
+          width: 400px;
+          height: 400px;
+          background: rgba(236, 72, 153, 0.07);
+          bottom: -80px;
+          left: -60px;
+        "
+      ></div>
+      <div
+        class="bg-orb"
+        style="
+          width: 300px;
+          height: 300px;
+          background: rgba(168, 85, 247, 0.06);
+          top: 40%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        "
+      ></div>
+
+      <!-- Particles -->
+      <div
+        class="particle"
+        style="
+          width: 3px;
+          height: 3px;
+          background: rgba(168, 85, 247, 0.5);
+          top: 12%;
+          left: 8%;
+        "
+      ></div>
+      <div
+        class="particle"
+        style="
+          width: 4px;
+          height: 4px;
+          background: rgba(236, 72, 153, 0.4);
+          top: 80%;
+          left: 88%;
+        "
+      ></div>
+      <div
+        class="particle"
+        style="
+          width: 3px;
+          height: 3px;
+          background: rgba(139, 92, 246, 0.5);
+          top: 18%;
+          right: 12%;
+        "
+      ></div>
+      <div
+        class="particle"
+        style="
+          width: 4px;
+          height: 4px;
+          background: rgba(168, 85, 247, 0.3);
+          bottom: 15%;
+          left: 25%;
+        "
+      ></div>
+
+      <!-- ---- Headline ---- -->
+      <div class="relative z-10 text-center mb-12">
+        <h1
+          class="text-[44px] font-extrabold text-white leading-tight tracking-tight"
+        >
+          Play audio. Open Sonic Blob.
+          <span
+            class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            >Enjoy.</span
+          >
+        </h1>
+        <p
+          class="text-purple-200/70 text-lg font-light mt-4 max-w-lg mx-auto leading-relaxed"
+        >
+          Start audio in any tab, open the extension, and watch the visualizer
+          react.
+        </p>
+      </div>
+
+      <!-- ---- 3-Step flow ---- -->
+      <div class="relative z-10 flex items-center gap-4">
+        <!-- Step 1: Play audio -->
+        <div class="step-card">
+          <span class="step-label">Step 1</span>
+          <div class="visual-item">
+            <div class="music-glow">
+              <svg
+                class="w-32 h-32 text-purple-400"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6Z" />
+              </svg>
+            </div>
+          </div>
+          <p class="step-desc text-gray-400">
+            Play audio in any <br />browser tab
+          </p>
+        </div>
+
+        <!-- Arrow (Smaller, more subtle) -->
+        <div class="w-12 flex justify-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 12h14m0 0l-6-6m6 6l-6 6"
+              stroke="rgba(168, 85, 247, 0.3)"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <!-- Step 2: Open extension -->
+        <div class="step-card">
+          <span class="step-label">Step 2</span>
+          <div class="visual-item">
+            <div
+              class="w-32 h-32 rounded-[32px] overflow-hidden border border-purple-500/20 flex items-center justify-center p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10"
+            >
+              <img
+                src="../public/logo.png"
+                alt="Sonic Blob"
+                class="w-full h-full object-contain"
+              />
+            </div>
+            <!-- Enlarged Pointer -->
+            <svg
+              class="pointer-icon text-white"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path
+                d="M7.188 2.239l10.797 10.797-4.293.001 3.513 7.373-2.684 1.282-3.516-7.37L7 17.5V2.239z"
+              />
+            </svg>
+          </div>
+          <p class="step-desc text-gray-400">
+            Open Sonic Blob <br />from your toolbar
+          </p>
+        </div>
+
+        <!-- Arrow -->
+        <div class="w-12 flex justify-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 12h14m0 0l-6-6m6 6l-6 6"
+              stroke="rgba(168, 85, 247, 0.3)"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <!-- Step 3: Enjoy visualizer -->
+        <div class="step-card">
+          <span class="step-label">Step 3</span>
+          <div class="visual-item">
+            <div
+              class="w-full h-full p-6 flex items-center justify-center bg-radial-gradient from-purple-500/5 to-transparent"
+            >
+              <img
+                src="assets/blob.png"
+                alt="Visualizer"
+                class="w-full h-full object-contain filter drop-shadow-2xl"
+              />
+            </div>
+          </div>
+          <p class="step-desc text-gray-400">
+            Watch the visualizer <br />react to your music
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- ======== END SLIDE CANVAS ======== -->
+    <script src="assets/nav.js"></script>
+  </body>
+</html>
