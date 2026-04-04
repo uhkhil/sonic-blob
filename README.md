@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="public/logo.png" alt="Sonic Blob Logo" width="128" />
   <h1>Sonic Blob</h1>
 </div>
 
