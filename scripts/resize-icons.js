@@ -15,9 +15,7 @@ async function resize() {
 
   for (const size of sizes) {
     const outputPath = path.join(outputDir, `${size}.png`);
-    await sharp(inputPath)
-      .resize(size, size)
-      .toFile(outputPath);
+    await sharp(inputPath).resize(size, size).toFile(outputPath);
     console.log(`Generated: ${outputPath}`);
   }
 
