@@ -3,39 +3,16 @@
  *
  * This file runs in the background and is responsible for:
  * 1. Handling the extension action click (extension icon in the toolbar).
- * 2. Managing the lifecycle of the visualizer tab (ensuring only one instance runs).
- * 3. Handling runtime messages to provide fresh media stream IDs for audio capture via `chrome.tabCapture`.
+ * 2. Handling runtime messages to provide fresh media stream IDs for audio capture via `chrome.tabCapture`.
  */
 
 /**
- * Closes any existing Sonic Blob visualizer tabs.
- * This ensures only one visualizer instance runs at a time.
- */
-async function closeExistingVisualizerTabs(): Promise<void> {
-  const visualizerUrl = chrome.runtime.getURL('index.html');
-  const existing = await chrome.tabs.query({ url: visualizerUrl + '*' });
-  if (existing.length > 0) {
-    const ids = existing
-      .map((t) => t.id)
-      .filter((id): id is number => id !== undefined);
-    if (ids.length > 0) {
-      await chrome.tabs.remove(ids);
-    }
-    // Small delay to ensure tabs are fully removed and resources freed
-    await new Promise((r) => setTimeout(r, 100));
-  }
-}
-
-/**
- * Handles the action click event. Closes existing visualizers and
- * opens a new visualizer targeting the clicked tab's audio.
+ * Handles the action click event. Opens a new visualizer targeting the clicked tab's audio.
  *
  * @param tab - The Chrome tab that was active when the extension action was clicked.
  */
 async function handleActionClick(tab: chrome.tabs.Tab): Promise<void> {
   if (!tab.id) return;
-
-  await closeExistingVisualizerTabs();
 
   // Get the target tab ID (the tab whose audio we want to capture)
   const targetTabId = tab.id;
