@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Sonic Blob",
+  "name": "Sonic Blob - Audio Visualizer",
   "short_name": "Sonic Blob",
   "version": "0.1.0",
   "description": "Visualize audio playing in your browser with an animated blob that reacts in real time.",
