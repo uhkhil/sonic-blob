@@ -7,12 +7,13 @@ async function capture() {
   const page = await browser.newPage();
   const screenshotsDir = path.join(process.cwd(), 'screenshots');
 
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 5; i++) {
     const filePath = path.join(process.cwd(), 'screenshots', `slide-${i}.html`);
     const fileUrl = `file://${filePath}`;
 
     console.log(`Capturing Slide ${i}: ${fileUrl}`);
 
+    await page.setViewportSize({ width: 1600, height: 1000 });
     await page.goto(fileUrl);
     // Wait for everything to load (including fonts/scripts)
     await page.waitForLoadState('networkidle');

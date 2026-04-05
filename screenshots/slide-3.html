@@ -55,8 +55,8 @@
         position: relative;
       }
       .visual-item img {
-        width: 350%;
-        height: 350%;
+        width: 85%;
+        height: 85%;
         object-fit: contain;
         filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.6));
       }
@@ -209,25 +209,37 @@
       </div>
 
       <!-- ---- Three theme cards ---- -->
-      <div class="relative z-10 flex items-center gap-12">
+      <div class="relative z-10 flex items-center justify-between w-full px-40">
         <!-- Theme 1: Amethyst -->
-        <div class="theme-card">
+        <div class="theme-card flex-1 flex justify-center">
           <div class="visual-item glow-purple">
-            <img src="assets/amethyst.png" alt="Amethyst Theme" />
+            <img
+              src="assets/amethyst.png"
+              alt="Amethyst Theme"
+              class="w-32 h-32 object-contain"
+            />
           </div>
         </div>
 
-        <!-- Theme 2: Cyberpunk (central focus) -->
-        <div class="theme-card scale-110">
+        <!-- Theme 2: Cyberpunk -->
+        <div class="theme-card flex-1 flex justify-center">
           <div class="visual-item glow-cyber">
-            <img src="assets/cyberpunk.png" alt="Cyberpunk Theme" />
+            <img
+              src="assets/cyberpunk.png"
+              alt="Cyberpunk Theme"
+              class="w-32 h-32 object-contain"
+            />
           </div>
         </div>
 
         <!-- Theme 3: Solar Flare -->
-        <div class="theme-card">
+        <div class="theme-card flex-1 flex justify-center">
           <div class="visual-item glow-solar">
-            <img src="assets/solar-flare.png" alt="Solar Flare Theme" />
+            <img
+              src="assets/solar-flare.png"
+              alt="Solar Flare Theme"
+              class="w-32 h-32 object-contain"
+            />
           </div>
         </div>
       </div>

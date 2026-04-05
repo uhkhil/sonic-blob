@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sonic Blob — Slide 5 (Small Promo)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        background: #020617;
+      }
+
+      /* ---- Canvas (440x280 small promo) ---- */
+      .slide-canvas {
+        width: 440px;
+        height: 280px;
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(
+          ellipse at 50% 50%,
+          #1a103d 0%,
+          #0a0a1a 100%
+        );
+      }
+
+      /* ---- Ambient background blurs ---- */
+      .bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(50px);
+        pointer-events: none;
+        opacity: 0.5;
+      }
+      .bg-orb-1 {
+        width: 250px;
+        height: 250px;
+        background: rgba(139, 92, 246, 0.2);
+        top: -50px;
+        left: -50px;
+      }
+      .bg-orb-2 {
+        width: 200px;
+        height: 200px;
+        background: rgba(236, 72, 153, 0.15);
+        bottom: -60px;
+        right: -30px;
+      }
+
+      /* ---- Floating particles ---- */
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0.4;
+      }
+    </style>
+  </head>
+  <body class="flex items-center justify-center min-h-screen">
+    <!-- ======== SLIDE CANVAS (440x280) ======== -->
+    <div
+      class="slide-canvas flex flex-col items-center justify-center p-6 text-center"
+    >
+      <!-- Background orbs -->
+      <div class="bg-orb bg-orb-1"></div>
+      <div class="bg-orb bg-orb-2"></div>
+
+      <!-- Text Content -->
+      <div class="relative z-10 w-full">
+        <!-- Logo -->
+        <div class="relative w-32 h-32 mx-auto mb-6">
+          <div
+            class="absolute inset-0 bg-purple-500/40 blur-[50px] rounded-full"
+          ></div>
+          <img
+            src="../public/logo.png"
+            alt="Sonic Blob logo"
+            class="w-full h-full object-contain relative z-20 drop-shadow-2xl"
+          />
+        </div>
+
+        <h1
+          class="text-5xl font-extrabold text-white leading-tight tracking-tight mt-0"
+        >
+          <span
+            class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            >Audio Visualizer</span
+          >
+        </h1>
+      </div>
+    </div>
+    <!-- ======== END SLIDE CANVAS ======== -->
+    <script src="assets/nav.js"></script>
+  </body>
+</html>

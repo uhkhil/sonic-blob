@@ -3,7 +3,7 @@
   const currentUrl = window.location.href;
   const slideMatch = currentUrl.match(/slide-(\d+)\.html/);
   const currentIdx = slideMatch ? parseInt(slideMatch[1]) : 1;
-  const totalSlides = 3;
+  const totalSlides = 5;
 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' && currentIdx < totalSlides) {
