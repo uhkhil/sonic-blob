@@ -1,7 +1,7 @@
 /**
  * @file Vite build configuration for bundling the extension and React output.
  */
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'node:path';
@@ -23,5 +23,9 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 1000,
+  },
+  test: {
+    environment: 'happy-dom',
+    setupFiles: ['./vitest.setup.ts'],
   },
 });

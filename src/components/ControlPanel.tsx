@@ -259,15 +259,18 @@ const SliderRow = ({
     return () => clearTimeout(handler);
   }, [localValue, value, onChange]);
 
+  const idStr = label.replace(/\s+/g, '-').toLowerCase();
+
   return (
     <div className="flex flex-col gap-1.5" title={title}>
       <div className="flex justify-between text-xs font-medium text-white/70 uppercase tracking-wider">
-        <label>{label}</label>
+        <label htmlFor={idStr}>{label}</label>
         <span>
           {isInt ? Math.round(localValue) : Number(localValue).toFixed(2)}
         </span>
       </div>
       <input
+        id={idStr}
         type="range"
         min={min}
         max={max}
