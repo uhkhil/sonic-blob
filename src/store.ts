@@ -1,49 +1,99 @@
 /**
  * @file Theme configuration and state management store for the application.
  */
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { INITIAL_THEMES } from './themes';
-import type { Theme } from './themes';
-
-export type Config = {
-  detail: number;
-  baseRadius: number;
-  rippleDepth: number;
-  sensitivity: number;
-  rotationSpeed: number;
-  audioSamples: number;
-  moveTogether: boolean;
-  roughness: number;
-  opacity: number;
-  primaryColor: string;
-  accentColor: string;
-  bgColor: string;
-};
+import type { Theme, Config } from './themes';
 
 export interface StoreState {
   activeThemeIndex: number;
   themes: Theme[];
+  update: (partial: Partial<Config>) => void;
+  reset: () => void;
+  setTheme: (index: number) => void;
+  nextTheme: () => void;
+  prevTheme: () => void;
 }
 
-type Listener = (state: StoreState) => void;
+const STORAGE_KEY = 'sonic_blob_themes_v2';
 
-class Store {
-  private state: StoreState;
-  private listeners: Set<Listener> = new Set();
-  private readonly STORAGE_KEY = 'sonic_blob_themes_v2';
+export const useStore = create<StoreState>()(
+  persist(
+    (set) => ({
+      activeThemeIndex: 0,
+      // Deep copy INITIAL_THEMES to avoid mutating the exported constant
+      themes: structuredClone(INITIAL_THEMES),
 
-  constructor() {
-    const saved = localStorage.getItem(this.STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Basic migration/validation
+      update: (partial) =>
+        set((state) => {
+          console.log('[Store: update]', partial);
+          const newThemes = [...state.themes];
+          newThemes[state.activeThemeIndex] = {
+            ...newThemes[state.activeThemeIndex],
+            config: { ...newThemes[state.activeThemeIndex].config, ...partial },
+          };
+          return { themes: newThemes };
+        }),
+
+      reset: () =>
+        set((state) => {
+          console.log('[Store: reset]');
+          const newThemes = [...state.themes];
+          const initialTheme = INITIAL_THEMES[state.activeThemeIndex];
+          newThemes[state.activeThemeIndex] = {
+            ...newThemes[state.activeThemeIndex],
+            config: { ...initialTheme.config },
+          };
+          return { themes: newThemes };
+        }),
+
+      setTheme: (index) =>
+        set((state) => {
+          console.log('[Store: setTheme]', index);
+          if (index >= 0 && index < state.themes.length) {
+            return { activeThemeIndex: index };
+          }
+          return state;
+        }),
+
+      nextTheme: () =>
+        set((state) => {
+          console.log('[Store: nextTheme]');
+          return {
+            activeThemeIndex:
+              state.activeThemeIndex === state.themes.length - 1
+                ? 0
+                : state.activeThemeIndex + 1,
+          };
+        }),
+
+      prevTheme: () =>
+        set((state) => {
+          console.log('[Store: prevTheme]');
+          return {
+            activeThemeIndex:
+              state.activeThemeIndex === 0
+                ? state.themes.length - 1
+                : state.activeThemeIndex - 1,
+          };
+        }),
+    }),
+    {
+      name: STORAGE_KEY,
+      merge: (persistedState: unknown, currentState) => {
+        const state = persistedState as Partial<StoreState>;
+        if (!state || typeof state !== 'object') {
+          return currentState;
+        }
+
+        // Basic validation and reconciliation
         if (
-          Array.isArray(parsed.themes) &&
-          typeof parsed.activeThemeIndex === 'number'
+          Array.isArray(state.themes) &&
+          typeof state.activeThemeIndex === 'number'
         ) {
-          // Reconcile saved themes with INITIAL_THEMES so new themes added to the code show up
           const mergedThemes = INITIAL_THEMES.map((initialTheme) => {
-            const savedTheme = parsed.themes.find(
+            const savedTheme = state.themes?.find(
               (t: Theme) => t.name === initialTheme.name,
             );
             if (savedTheme && savedTheme.config) {
@@ -52,119 +102,24 @@ class Store {
                 config: { ...initialTheme.config, ...savedTheme.config },
               };
             }
-            return JSON.parse(JSON.stringify(initialTheme));
+            return structuredClone(initialTheme);
           });
 
           const validIndex =
-            parsed.activeThemeIndex >= 0 &&
-            parsed.activeThemeIndex < mergedThemes.length
-              ? parsed.activeThemeIndex
+            state.activeThemeIndex >= 0 &&
+            state.activeThemeIndex < mergedThemes.length
+              ? state.activeThemeIndex
               : 0;
 
-          this.state = {
+          return {
+            ...currentState,
             activeThemeIndex: validIndex,
             themes: mergedThemes,
           };
-        } else {
-          this.state = this.createInitialState();
         }
-      } catch (e) {
-        console.error(e);
-        this.state = this.createInitialState();
-      }
-    } else {
-      this.state = this.createInitialState();
-    }
-  }
 
-  private createInitialState(): StoreState {
-    // Deep copy INITIAL_THEMES to avoid mutating the exported constant
-    return {
-      activeThemeIndex: 0,
-      themes: JSON.parse(JSON.stringify(INITIAL_THEMES)),
-    };
-  }
-
-  get currentState(): StoreState {
-    return this.state;
-  }
-
-  // Gets the current active theme config
-  get config(): Config {
-    return this.state.themes[this.state.activeThemeIndex].config;
-  }
-
-  // Gets the active theme name
-  get activeThemeName(): string {
-    return this.state.themes[this.state.activeThemeIndex].name;
-  }
-
-  // Update actively selected theme's config
-  update(partial: Partial<Config>) {
-    const activeIndex = this.state.activeThemeIndex;
-    this.state.themes[activeIndex].config = {
-      ...this.state.themes[activeIndex].config,
-      ...partial,
-    };
-    this.save();
-    this.notify();
-  }
-
-  // Reset ONLY the active theme back to its initial value
-  reset() {
-    const activeIndex = this.state.activeThemeIndex;
-    const initialTheme = INITIAL_THEMES[activeIndex];
-    this.state.themes[activeIndex].config = { ...initialTheme.config };
-    this.save();
-    this.notify();
-  }
-
-  setTheme(index: number) {
-    if (index >= 0 && index < this.state.themes.length) {
-      this.state.activeThemeIndex = index;
-      this.save();
-      this.notify();
-    }
-  }
-
-  nextTheme() {
-    const nextIndex =
-      this.state.activeThemeIndex === this.state.themes.length - 1
-        ? 0
-        : this.state.activeThemeIndex + 1;
-    this.setTheme(nextIndex);
-  }
-
-  prevTheme() {
-    const prevIndex =
-      this.state.activeThemeIndex === 0
-        ? this.state.themes.length - 1
-        : this.state.activeThemeIndex - 1;
-    this.setTheme(prevIndex);
-  }
-
-  subscribe(listener: Listener) {
-    this.listeners.add(listener);
-    return () => {
-      this.listeners.delete(listener);
-    };
-  }
-
-  private save() {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
-  }
-
-  private notify() {
-    // Pass a new object reference to trigger React updates
-    this.listeners.forEach((l) => l({ ...this.state }));
-  }
-}
-
-/**
- * Store access hook for subscribing to state updates.
- */
-export const useStore = () => {
-  return store;
-};
-
-export const store = new Store();
+        return currentState;
+      },
+    },
+  ),
+);

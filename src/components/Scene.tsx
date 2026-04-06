@@ -2,7 +2,7 @@
  * @file The 3D scene component orchestrating the WebGL renderer and audio input.
  */
 import { useEffect, useRef } from 'react';
-import { store } from '../store';
+import { useStore } from '../store';
 import { startAudioCapture } from '../audio';
 import { BlobRenderer } from '../three/BlobRenderer';
 
@@ -23,12 +23,16 @@ export const Scene = ({ onError, onSilence, onAudio }: SceneProps) => {
     if (!container) return;
 
     // 1. Initialize the 3D Render Engine
-    const renderer = new BlobRenderer(container, store.config);
+    const initialState = useStore.getState();
+    const renderer = new BlobRenderer(
+      container,
+      initialState.themes[initialState.activeThemeIndex].config,
+    );
     renderer.onAudio = onAudio;
     renderer.onSilence = onSilence;
 
     // 2. Subscribe to Config Changes so the blob updates dynamically
-    const unsubscribe = store.subscribe((newState) => {
+    const unsubscribe = useStore.subscribe((newState) => {
       const newConfig = newState.themes[newState.activeThemeIndex].config;
       renderer.updateConfig(newConfig);
     });

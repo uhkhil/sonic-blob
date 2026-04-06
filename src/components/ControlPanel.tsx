@@ -2,9 +2,8 @@
  * @file Control panel for adjusting the blob's appearance and behavior.
  */
 import React, { useState, useEffect, useRef } from 'react';
-import { store } from '../store';
-import type { StoreState } from '../store';
-import type { Config } from '../store';
+import { useStore } from '../store';
+import type { Config } from '../themes';
 import { CloseIcon, ResetIcon } from './Icons';
 
 /**
@@ -14,7 +13,7 @@ export const ControlPanel: React.FC<{
   isOpen: boolean;
   onClose: () => void;
 }> = ({ isOpen, onClose }) => {
-  const [state, setState] = useState<StoreState>(store.currentState);
+  const state = useStore();
   const config = state.themes[state.activeThemeIndex].config;
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -37,22 +36,15 @@ export const ControlPanel: React.FC<{
     };
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    const unsubscribe = store.subscribe(setState);
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   const handleChange = (
     key: keyof Config,
     value: number | string | boolean,
   ) => {
-    store.update({ [key]: value });
+    state.update({ [key]: value });
   };
 
   const handleReset = () => {
-    store.reset();
+    state.reset();
   };
 
   // The CSS transition classes mirror the old raw manual classList modification

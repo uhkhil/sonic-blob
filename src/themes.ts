@@ -1,7 +1,20 @@
 /**
  * @file Defines standard themes and their visual configurations.
  */
-import type { Config } from './store';
+export type Config = {
+  detail: number;
+  baseRadius: number;
+  rippleDepth: number;
+  sensitivity: number;
+  rotationSpeed: number;
+  audioSamples: number;
+  moveTogether: boolean;
+  roughness: number;
+  opacity: number;
+  primaryColor: string;
+  accentColor: string;
+  bgColor: string;
+};
 
 export interface Theme {
   name: string;

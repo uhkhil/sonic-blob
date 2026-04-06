@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { createBlobMaterial, blobShaderUniforms } from './BlobMaterial';
 import { analyzeFrequencyData } from '../audio';
-import type { Config } from '../store';
+import type { Config } from '../themes';
 
 /**
  * BlobRenderer

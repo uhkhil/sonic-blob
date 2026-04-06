@@ -48,6 +48,7 @@ The project focuses on:
 - **TypeScript**
 - **Vite**
 - **Three.js**
+- **Zustand**
 - **simplex-noise**
 - **Tailwind CSS v4**
 - **Chrome Extensions Manifest V3**
@@ -139,6 +140,7 @@ sonic-blob/
 - [React](https://react.dev/) - UI Library
 - [Three.js](https://threejs.org/) - 3D Engine
 - [Vite](https://vitejs.dev/) - Frontend Tooling
+- [Zustand](https://zustand.docs.pmnd.rs/) - State Management
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [TypeScript](https://www.typescriptlang.org/) - Type Safety
 - [Simplex Noise](https://github.com/jwagner/simplex-noise.js) - Smooth procedural deformation

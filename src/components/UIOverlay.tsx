@@ -2,7 +2,7 @@
  * @file Main UI overlay container managing panels, modal toggles, and inactivity.
  */
 import React, { useState, useEffect } from 'react';
-import { store } from '../store';
+import { useStore } from '../store';
 import { ControlPanel } from './ControlPanel';
 import { AboutModal } from './AboutModal';
 import { ThemeSwitcher } from './ThemeSwitcher';
@@ -60,14 +60,23 @@ export const UIOverlay: React.FC = () => {
         if (isPanelOpen) setIsPanelOpen(false);
         if (isAboutOpen) setIsAboutOpen(false);
       }
+
+      // Suppress other global shortcuts if the user is typing or interacting with an input
+      const activeTag = document.activeElement?.tagName.toLowerCase();
+      const isInputFocused =
+        activeTag === 'input' ||
+        activeTag === 'textarea' ||
+        activeTag === 'select';
+
+      if (isInputFocused) return;
       if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
       }
       if (e.key === 'ArrowRight') {
-        store.nextTheme();
+        useStore.getState().nextTheme();
       }
       if (e.key === 'ArrowLeft') {
-        store.prevTheme();
+        useStore.getState().prevTheme();
       }
     };
 
