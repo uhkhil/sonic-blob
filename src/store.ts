@@ -27,7 +27,6 @@ export const useStore = create<StoreState>()(
 
       update: (partial) =>
         set((state) => {
-          console.log('[Store: update]', partial);
           const newThemes = [...state.themes];
           newThemes[state.activeThemeIndex] = {
             ...newThemes[state.activeThemeIndex],
@@ -38,7 +37,6 @@ export const useStore = create<StoreState>()(
 
       reset: () =>
         set((state) => {
-          console.log('[Store: reset]');
           const newThemes = [...state.themes];
           const initialTheme = INITIAL_THEMES[state.activeThemeIndex];
           newThemes[state.activeThemeIndex] = {
@@ -50,7 +48,6 @@ export const useStore = create<StoreState>()(
 
       setTheme: (index) =>
         set((state) => {
-          console.log('[Store: setTheme]', index);
           if (index >= 0 && index < state.themes.length) {
             return { activeThemeIndex: index };
           }
@@ -59,7 +56,6 @@ export const useStore = create<StoreState>()(
 
       nextTheme: () =>
         set((state) => {
-          console.log('[Store: nextTheme]');
           return {
             activeThemeIndex:
               state.activeThemeIndex === state.themes.length - 1
@@ -70,7 +66,6 @@ export const useStore = create<StoreState>()(
 
       prevTheme: () =>
         set((state) => {
-          console.log('[Store: prevTheme]');
           return {
             activeThemeIndex:
               state.activeThemeIndex === 0
